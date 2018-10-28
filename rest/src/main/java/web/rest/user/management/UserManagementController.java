@@ -45,6 +45,7 @@ public class UserManagementController {
 				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
 		}
+
 		return new ResponseEntity<UserRegistrationResponseData>(responseData, httpStatus);
 	}
 }
