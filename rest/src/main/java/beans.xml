@@ -14,6 +14,10 @@
 
    <context:annotation-config/>
 
+	<!-- User management -->
+   <bean id = "userDao" class = "hibernate.dao.UserDao">
+   </bean>
+
    <bean id = "userManagementUtil" class = "web.rest.user.management.UserManagementUtil">
    </bean>
    
@@ -22,6 +26,7 @@
 		<property name="url" value="jdbc:sqlite:C:\Users\Harrel\Desktop\EclipseProjects\rest\target\data.sqlite" />
 	</bean>
 	
+	<!-- Spring + Hibernate transaction management -->
 	<bean id="entityManagerFactory" 
 			class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 			p:packagesToScan="hibernate.entities"
@@ -34,11 +39,10 @@
 		</property>
 	</bean>
 
-	<!-- Transactions -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
-	<!-- enable the configuration of transactional behavior based on annotations -->
+
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 

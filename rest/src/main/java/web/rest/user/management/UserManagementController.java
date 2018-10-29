@@ -27,21 +27,19 @@ public class UserManagementController {
 		UserRegistrationResponseData responseData = null;
 		HttpStatus httpStatus = null;
 
-		UserRegistrationResponseData.ResponseState state = this.userManagementUtil.validateRegistrationData(userData);
-		if (state != null) {
-			responseData = new UserRegistrationResponseData(state, "Login already exists!");
+		UserRegistrationResponseData badRequestResponse = this.userManagementUtil.validateRegistrationData(userData);
+		if (badRequestResponse != null) {
+			responseData = badRequestResponse;
 			httpStatus = HttpStatus.BAD_REQUEST;
 		} else {
 
 			try {
 				this.userManagementUtil.addNewUser(User.createFromRegistrationData(userData));
-				responseData = new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.CREATED,
-						"User created succesfully!");
+				responseData = this.userManagementUtil.createSuccessfulRegistrationResponse();
 				httpStatus = HttpStatus.CREATED;
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				responseData = new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.UNKNOWN,
-						"Unexpected error occured!");
+				responseData = this.userManagementUtil.createFailedRegistrationResponse();
 				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
 		}

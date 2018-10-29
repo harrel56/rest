@@ -1,44 +1,77 @@
 package web.rest.user.management;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
+import hibernate.dao.UserDao;
 import hibernate.entities.User;
 
-@Component
+@Service
 public class UserManagementUtil {
 
-	@PersistenceContext
-	private EntityManager em;
+	@Autowired
+	private UserDao userDao;
 
-	@Transactional(readOnly = true)
-	public UserRegistrationResponseData.ResponseState validateRegistrationData(
-			UserRegistrationRequestData registrationData) {
+	public UserRegistrationResponseData validateRegistrationData(UserRegistrationRequestData registrationData) {
 
 		if (!this.isLoginUnique(registrationData.getLogin())) {
-			return UserRegistrationResponseData.ResponseState.LOGIN_ALREADY_TAKEN;
-		} else {
-			return null;
+			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.LOGIN_ALREADY_TAKEN,
+					"Login already taken");
+		}
+		if (!this.isEmailUnique(registrationData.getEmail())) {
+			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.EMAIL_ALREADY_TAKEN,
+					"Email already taken");
+		}
+		if (!this.isLoginValid(registrationData.getLogin())) {
+			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.INVALID_LOGIN,
+					"Login must contain at least 5 alphanumerical characters");
+		}
+		if (!this.isEmailValid(registrationData.getEmail())) {
+			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.INVALID_EMAIL,
+					"Invalid email format");
+		}
+		if (!this.isPasswordValid(registrationData.getPassword())) {
+			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.INVALID_PASSWORD,
+					"Password must contain at least 8 characters: at least 1 letter and no whitespaces");
 		}
 
+		return null;
 	}
 
-	@Transactional
+	public UserRegistrationResponseData createSuccessfulRegistrationResponse() {
+		return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.CREATED,
+				"User created successfully");
+	}
+
+	public UserRegistrationResponseData createFailedRegistrationResponse() {
+		return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.UNKNOWN,
+				"Unexpected error occured");
+	}
+
 	public void addNewUser(User user) {
-		this.em.persist(user);
+		this.userDao.addUser(user);
 	}
 
 	private boolean isLoginUnique(String login) {
-		CriteriaBuilder builder = this.em.getCriteriaBuilder();
-		CriteriaQuery<User> crit = builder.createQuery(User.class);
-		Root<User> root = crit.from(User.class);
-		crit.where(builder.equal(root.get("login"), login));
-		return this.em.createQuery(crit).getResultList().isEmpty();
+		return this.userDao.findByLogin(login).isEmpty();
+	}
+
+	private boolean isEmailUnique(String email) {
+		return this.userDao.findByLogin(email).isEmpty();
+	}
+
+	private boolean isLoginValid(String login) {
+		String regex = "^[a-zA-Z0-9]{5,20}$";
+		return login.matches(regex);
+	}
+
+	private boolean isEmailValid(String email) {
+		String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+		return email.matches(regex);
+	}
+
+	private boolean isPasswordValid(String password) {
+		String regex = "^(?=.*[a-zA-Z])(?=\\S+$).{8,}$";
+		return password.matches(regex);
 	}
 }
