@@ -6,8 +6,8 @@ import java.io.Serializable;
 public class UserRegistrationResponseData implements Serializable {
 
 	public static enum ResponseState {
-		CREATED(true), LOGIN_ALREADY_TAKEN(false), EMAIL_ALREADY_TAKEN(false), INVALID_LOGIN(false),
-		INVALID_EMAIL(false), INVALID_PASSWORD(false), UNKNOWN(false);
+		CREATED(true), LOGIN_ALREADY_TAKEN(false), EMAIL_ALREADY_TAKEN(false), LOGIN_INVALID(false),
+		EMAIL_INVALID(false), PASSWORD_INVALID(false), UNKNOWN(false);
 
 		private boolean succeded;
 

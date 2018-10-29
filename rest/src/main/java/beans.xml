@@ -26,6 +26,7 @@
 		<property name="url" value="jdbc:sqlite:C:\Users\Harrel\Desktop\EclipseProjects\rest\target\data.sqlite" />
 	</bean>
 	
+	
 	<!-- Spring + Hibernate transaction management -->
 	<bean id="entityManagerFactory" 
 			class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
@@ -45,5 +46,14 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
+
+	<!-- Bundles support - multi language support -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+	   	<property name="basenames">
+			<list>
+		    	<value>i18n/userManagement</value>
+			</list>
+	  	</property>
+	</bean>
 
 </beans>
