@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import hibernate.entities.User;
-
 @RestController
 @RequestMapping("/user-management")
 public class UserManagementController {
@@ -25,7 +23,7 @@ public class UserManagementController {
 	private UserManagementUtil userManagementUtil;
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<UserRegistrationResponseData> greeting(
+	public ResponseEntity<UserRegistrationResponseData> register(
 			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestBody UserRegistrationRequestData userData) {
 
@@ -40,7 +38,7 @@ public class UserManagementController {
 		} else {
 
 			try {
-				this.userManagementUtil.addNewUser(User.createFromRegistrationData(userData));
+				this.userManagementUtil.addNewUser(userData);
 				responseData = this.userManagementUtil.createSuccessfulRegistrationResponse(locale);
 				httpStatus = HttpStatus.CREATED;
 			} catch (Exception e) {

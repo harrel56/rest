@@ -12,22 +12,20 @@
    http://www.springframework.org/schema/tx
    http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-   <context:annotation-config/>
+	<context:annotation-config/>
 
 	<!-- User management -->
-   <bean id = "userDao" class = "hibernate.dao.UserDao">
-   </bean>
+	<bean id = "userDao" class = "hibernate.dao.UserDao" />
 
-   <bean id = "userManagementUtil" class = "web.rest.user.management.UserManagementUtil">
-   </bean>
-   
-   	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.sqlite.JDBC" />
-		<property name="url" value="jdbc:sqlite:C:\Users\Harrel\Desktop\EclipseProjects\rest\target\data.sqlite" />
-	</bean>
+	<bean id = "userManagementUtil" class = "web.rest.user.management.UserManagementUtil" />
 	
 	
 	<!-- Spring + Hibernate transaction management -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.sqlite.JDBC" />
+		<property name="url" value="jdbc:sqlite:C:\Users\Harrel\Desktop\git-rest\rest\target\data.sqlite" />
+	</bean>
+	
 	<bean id="entityManagerFactory" 
 			class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 			p:packagesToScan="hibernate.entities"
@@ -47,6 +45,10 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 
+	<!-- Security -->
+	<bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+          
+          
 	<!-- Bundles support - multi language support -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 	   	<property name="basenames">

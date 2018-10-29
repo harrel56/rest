@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import hibernate.dao.UserDao;
@@ -17,6 +18,9 @@ public class UserManagementUtil {
 
 	@Autowired
 	private MessageSource messageSource;
+
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 
 	public UserRegistrationResponseData validateRegistrationData(UserRegistrationRequestData registrationData,
 			Locale locale) {
@@ -56,6 +60,12 @@ public class UserManagementUtil {
 	}
 
 	public void addNewUser(User user) {
+		this.userDao.addUser(user);
+	}
+
+	public void addNewUser(UserRegistrationRequestData userData) {
+		User user = new User(null, userData.getLogin(), userData.getEmail(),
+				this.encoder.encode(userData.getPassword()), null);
 		this.userDao.addUser(user);
 	}
 
