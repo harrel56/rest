@@ -97,7 +97,7 @@ public class UserManagementUtil {
 		user.setActivationString(this.generateActivationString());
 		this.userDao.addUser(user);
 
-		this.emailUtils.sendActivationEmail(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
+		this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
 	}
 
 	public boolean performUserActivation(String login, String activationString) {

@@ -14,6 +14,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +35,8 @@ public class EmailUtils {
 	@Value("${mail.password}")
 	private String password;
 
-	public void sendActivationEmail(String recipient, String login, String activationString, Locale locale)
+	@Async
+	public void sendActivationEmailAsync(String recipient, String login, String activationString, Locale locale)
 			throws MessagingException {
 
 		Message msg = this.prepareMimeMessage();
