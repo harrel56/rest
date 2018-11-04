@@ -1,5 +1,6 @@
 package web.rest.email;
 
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -10,48 +11,57 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
+
+@Service
 public class EmailUtils {
 
-	private static final String SMTP_HOST_NAME = "smtp.gmail.com";
-	private static final String SMTP_PORT = "587";
-	private static final String emailMsgTxt = "Test Message Contents";
-	private static final String emailSubjectTxt = "A test from gmail";
-	private static final String[] sendTo = { "marcin.slowik95@gmail.com" };
+	@Autowired
+	private MessageSource messageSource;
 
-	public static void sendSSLMessage() throws MessagingException {
-		boolean debug = true;
+	@Value("${mail.smtp.host}")
+	private String smtpHost;
 
-		// Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+	@Value("${mail.smtp.port}")
+	private String smtpPort;
 
+	@Value("${mail.login}")
+	private String login;
+
+	@Value("${mail.password}")
+	private String password;
+
+	public void sendActivationEmail(String recipient, String login, String activationString, Locale locale)
+			throws MessagingException {
+
+		Message msg = this.prepareMimeMessage();
+		msg.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
+
+		msg.setSubject(this.messageSource.getMessage("userManagement.activationMailSubject", null, locale));
+		msg.setContent(this.messageSource.getMessage("userManagement.activationMailBody",
+				new Object[] { activationString }, locale), "text/plain");
+		Transport.send(msg);
+	}
+
+	private MimeMessage prepareMimeMessage() {
 		Properties props = new Properties();
-		props.put("mail.smtp.user", "marcin.slowik95@gmail.com");
-		props.put("mail.smtp.host", SMTP_HOST_NAME);
+		props.put("mail.smtp.user", this.login);
+		props.put("mail.smtp.host", this.smtpHost);
 		props.put("mail.smtp.auth", "true");
-		props.put("mail.debug", "true");
-		props.put("mail.smtp.port", SMTP_PORT);
+		props.put("mail.smtp.port", this.smtpPort);
 		props.put("mail.smtp.starttls.enable", "true");
 
 		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("marcin.slowik95@gmail.com", "ogame123");
+				return new PasswordAuthentication(EmailUtils.this.login, EmailUtils.this.password);
 			}
 		});
 
-		session.setDebug(debug);
-
-		Message msg = new MimeMessage(session);
-
-		InternetAddress[] addressTo = new InternetAddress[sendTo.length];
-		for (int i = 0; i < sendTo.length; i++) {
-			addressTo[i] = new InternetAddress(sendTo[i]);
-		}
-		msg.setRecipients(Message.RecipientType.TO, addressTo);
-
-		// Setting the Subject and Content Type
-		msg.setSubject(emailSubjectTxt);
-		msg.setContent(emailMsgTxt, "text/plain");
-		Transport.send(msg);
+		return new MimeMessage(session);
 	}
 
 }

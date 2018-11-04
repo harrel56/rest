@@ -3,6 +3,8 @@ package web.rest.user.management;
 import java.util.List;
 import java.util.Locale;
 
+import javax.mail.MessagingException;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import hibernate.dao.UserDao;
 import hibernate.entities.User;
+import web.rest.email.EmailUtils;
 import web.rest.user.management.activation.UserActivationResponseData;
 import web.rest.user.management.register.UserRegistrationRequestData;
 import web.rest.user.management.register.UserRegistrationResponseData;
@@ -27,6 +30,9 @@ public class UserManagementUtil {
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
+
+	@Autowired
+	private EmailUtils emailUtils;
 
 	@Value("${user-management.activation-string-length}")
 	private int activationStringLength;
@@ -83,14 +89,15 @@ public class UserManagementUtil {
 	 * activation email
 	 * 
 	 * @param userData
+	 * @throws MessagingException
 	 */
-	public void addNewUser(UserRegistrationRequestData userData) {
+	public void addNewUser(UserRegistrationRequestData userData, Locale locale) throws MessagingException {
 		User user = new User(null, userData.getLogin(), userData.getEmail(),
 				this.encoder.encode(userData.getPassword()));
 		user.setActivationString(this.generateActivationString());
 		this.userDao.addUser(user);
 
-		// TODO send email
+		this.emailUtils.sendActivationEmail(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
 	}
 
 	public boolean performUserActivation(String login, String activationString) {

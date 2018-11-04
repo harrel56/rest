@@ -44,7 +44,7 @@ public class UserManagementController {
 		} else {
 
 			try {
-				this.userManagementUtil.addNewUser(userData);
+				this.userManagementUtil.addNewUser(userData, locale);
 				responseData = this.userManagementUtil.createSuccessfulRegistrationResponse(locale);
 				httpStatus = HttpStatus.CREATED;
 			} catch (Exception e) {
@@ -94,7 +94,7 @@ public class UserManagementController {
 		} else {
 
 			try {
-				this.userManagementUtil.addNewUser(userData);
+				this.userManagementUtil.addNewUser(userData, locale);
 				responseData = this.userManagementUtil.createSuccessfulRegistrationResponse(locale);
 				httpStatus = HttpStatus.CREATED;
 			} catch (Exception e) {
