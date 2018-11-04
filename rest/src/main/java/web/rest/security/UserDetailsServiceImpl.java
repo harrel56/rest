@@ -3,8 +3,6 @@ package web.rest.security;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,15 +23,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Autowired
 	private UserDao userDao;
 
-	private static transient final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
-
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		boolean accountEnabled = true;
 		List<User> userList = this.userDao.findByLogin(username);
 
 		if (userList.isEmpty()) {
-			logger.warn("NO SUCH USER");
-			throw new UsernameNotFoundException(String.format("The username %s doesn't exist", username));
+			throw new UsernameNotFoundException("Invalid login or password");
+		} else if (userList.get(0).getActivationString() != null) {
+			accountEnabled = false;
 		}
 
 		User user = userList.get(0);
@@ -41,9 +40,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(user.getRole()));
 
-		UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getLogin(),
-				user.getPassword(), authorities);
-
-		return userDetails;
+		return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(),
+				accountEnabled, true, true, true, authorities);
 	}
 }

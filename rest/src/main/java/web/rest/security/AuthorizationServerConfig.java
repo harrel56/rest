@@ -58,5 +58,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		endpoints.tokenServices(this.defaultTokenServices).authenticationManager(this.authenticationManager)
 				.accessTokenConverter(this.accessTokenConverter).userDetailsService(this.userDetailsService);
+		/*
+		 * Because propagating exception is trash and only one type and we have no
+		 * locale in this space and time, thus authorization fail message cannot be
+		 * translated - it must be done by client side FIXME pls :(
+		 */
 	}
 }

@@ -33,6 +33,7 @@ public class User implements Serializable {
 	private String role;
 	private Timestamp createTime;
 	private Timestamp modifyTime;
+	private String activationString;
 
 	public User() {
 	}
@@ -126,6 +127,15 @@ public class User implements Serializable {
 
 	public void setModifyTime(Timestamp modifyTime) {
 		this.modifyTime = modifyTime;
+	}
+
+	@Column(name = "ACTIVATION_STRING", length = 2000000000)
+	public String getActivationString() {
+		return this.activationString;
+	}
+
+	public void setActivationString(String activationString) {
+		this.activationString = activationString;
 	}
 
 }

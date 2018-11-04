@@ -47,6 +47,15 @@
 
 	<!-- Security -->
 	<bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+	
+	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<property name="hideUserNotFoundExceptions" value="false" />
+		<property name="userDetailsService">
+			<bean id="userDetailsServiceImpl" class="web.rest.security.UserDetailsServiceImpl" />
+		</property>
+	</bean>
+	
+
           
           
 	<!-- Bundles support - multi language support -->
