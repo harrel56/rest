@@ -12,7 +12,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import web.rest.user.management.activation.UserActivationResponseData;
+import web.rest.user.management.register.UserRegistrationRequestData;
+import web.rest.user.management.register.UserRegistrationResponseData;
 
 @RestController
 @RequestMapping("/user-management")
@@ -23,7 +28,6 @@ public class UserManagementController {
 	@Autowired
 	private UserManagementUtil userManagementUtil;
 
-	@PreAuthorize("permitAll()")
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<UserRegistrationResponseData> register(
 			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
@@ -51,6 +55,26 @@ public class UserManagementController {
 		}
 
 		return new ResponseEntity<UserRegistrationResponseData>(responseData, httpStatus);
+	}
+
+	@RequestMapping(value = "/activate", method = RequestMethod.GET)
+	public ResponseEntity<UserActivationResponseData> activate(
+			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @RequestParam String login,
+			@RequestParam("a_str") String activationString) {
+
+		try {
+			if (this.userManagementUtil.performUserActivation(login, activationString)) {
+				return new ResponseEntity<UserActivationResponseData>(
+						this.userManagementUtil.createSuccessfulActivationResponse(locale), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<UserActivationResponseData>(
+						this.userManagementUtil.createFailedActivationResponse(locale), HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return new ResponseEntity<UserActivationResponseData>(
+					this.userManagementUtil.createFailedActivationResponse(locale), HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")

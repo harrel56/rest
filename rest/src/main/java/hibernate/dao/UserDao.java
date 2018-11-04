@@ -24,6 +24,11 @@ public class UserDao {
 		this.em.persist(user);
 	}
 
+	@Transactional
+	public User updateUser(User user) {
+		return this.em.merge(user);
+	}
+
 	@Transactional(readOnly = true)
 	public List<User> findByLogin(String login) {
 		CriteriaBuilder builder = this.em.getCriteriaBuilder();

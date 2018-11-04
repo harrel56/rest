@@ -1,14 +1,20 @@
 package web.rest.user.management;
 
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import hibernate.dao.UserDao;
 import hibernate.entities.User;
+import web.rest.user.management.activation.UserActivationResponseData;
+import web.rest.user.management.register.UserRegistrationRequestData;
+import web.rest.user.management.register.UserRegistrationResponseData;
 
 @Service
 public class UserManagementUtil {
@@ -21,6 +27,9 @@ public class UserManagementUtil {
 
 	@Autowired
 	private BCryptPasswordEncoder encoder;
+
+	@Value("${user-management.activation-string-length}")
+	private int activationStringLength;
 
 	public UserRegistrationResponseData validateRegistrationData(UserRegistrationRequestData registrationData,
 			Locale locale) {
@@ -59,14 +68,49 @@ public class UserManagementUtil {
 				this.messageSource.getMessage("userManagement.unknownError", null, null, locale));
 	}
 
-	public void addNewUser(User user) {
-		this.userDao.addUser(user);
+	public UserActivationResponseData createSuccessfulActivationResponse(Locale locale) {
+		return new UserActivationResponseData(UserActivationResponseData.ResponseState.ACTIVATED,
+				this.messageSource.getMessage("userManagement.activationSuccess", null, null, locale));
 	}
 
+	public UserActivationResponseData createFailedActivationResponse(Locale locale) {
+		return new UserActivationResponseData(UserActivationResponseData.ResponseState.FAILED,
+				this.messageSource.getMessage("userManagement.activationFail", null, null, locale));
+	}
+
+	/**
+	 * Encode password, generate activation string, put all in DB and send
+	 * activation email
+	 * 
+	 * @param userData
+	 */
 	public void addNewUser(UserRegistrationRequestData userData) {
 		User user = new User(null, userData.getLogin(), userData.getEmail(),
-				this.encoder.encode(userData.getPassword()), null);
+				this.encoder.encode(userData.getPassword()));
+		user.setActivationString(this.generateActivationString());
 		this.userDao.addUser(user);
+
+		// TODO send email
+	}
+
+	public boolean performUserActivation(String login, String activationString) {
+		User user = this.getSingleUserByLogin(login);
+		if (activationString.equals(user.getActivationString())) {
+			user.setActivationString(null);
+			this.userDao.updateUser(user);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private User getSingleUserByLogin(String login) {
+		List<User> userList = this.userDao.findByLogin(login);
+		if (userList.isEmpty()) {
+			return null;
+		} else {
+			return userList.get(0);
+		}
 	}
 
 	private boolean isLoginUnique(String login) {
@@ -90,5 +134,9 @@ public class UserManagementUtil {
 	private boolean isPasswordValid(String password) {
 		String regex = "^(?=.*[a-zA-Z])(?=\\S+$).{8,}$";
 		return password.matches(regex);
+	}
+
+	private String generateActivationString() {
+		return RandomStringUtils.randomAlphanumeric(this.activationStringLength);
 	}
 }

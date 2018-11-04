@@ -1,4 +1,4 @@
-package web.rest.user.management;
+package web.rest.user.management.register;
 
 import java.io.Serializable;
 
