@@ -6,6 +6,8 @@ import java.util.Locale;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -16,11 +18,14 @@ import hibernate.dao.UserDao;
 import hibernate.entities.User;
 import web.rest.email.EmailUtils;
 import web.rest.user.management.activation.UserActivationResponseData;
+import web.rest.user.management.passwordchange.PasswordChangeResponseData;
 import web.rest.user.management.register.UserRegistrationRequestData;
 import web.rest.user.management.register.UserRegistrationResponseData;
 
 @Service
 public class UserManagementUtil {
+
+	private static transient final Logger logger = LoggerFactory.getLogger(UserManagementUtil.class);
 
 	@Autowired
 	private UserDao userDao;
@@ -70,7 +75,7 @@ public class UserManagementUtil {
 	}
 
 	public UserRegistrationResponseData createFailedRegistrationResponse(Locale locale) {
-		return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.UNKNOWN,
+		return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.UNKNOWN_ERROR,
 				this.messageSource.getMessage("userManagement.unknownError", null, null, locale));
 	}
 
@@ -108,6 +113,26 @@ public class UserManagementUtil {
 			return true;
 		} else {
 			return false;
+		}
+	}
+
+	public PasswordChangeResponseData.ResponseState changeUserPassword(String login, String oldPassword,
+			String newPassword) {
+		User user = this.getSingleUserByLogin(login);
+
+		try {
+			if (!this.encoder.matches(oldPassword, user.getPassword())) {
+				return PasswordChangeResponseData.ResponseState.PASSWORD_INVALID;
+			} else if (!this.isPasswordValid(newPassword)) {
+				return PasswordChangeResponseData.ResponseState.NEW_PASSWORD_INVALID;
+			} else {
+				user.setPassword(this.encoder.encode(newPassword));
+				this.userDao.updateUser(user);
+				return PasswordChangeResponseData.ResponseState.CHANGED;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return PasswordChangeResponseData.ResponseState.UNKNOWN_ERROR;
 		}
 	}
 

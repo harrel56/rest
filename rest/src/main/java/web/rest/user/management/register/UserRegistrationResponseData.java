@@ -7,7 +7,7 @@ public class UserRegistrationResponseData implements Serializable {
 
 	public static enum ResponseState {
 		CREATED(true), LOGIN_ALREADY_TAKEN(false), EMAIL_ALREADY_TAKEN(false), LOGIN_INVALID(false),
-		EMAIL_INVALID(false), PASSWORD_INVALID(false), UNKNOWN(false);
+		EMAIL_INVALID(false), PASSWORD_INVALID(false), UNKNOWN_ERROR(false);
 
 		private boolean succeded;
 

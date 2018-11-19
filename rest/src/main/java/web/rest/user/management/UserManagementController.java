@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import web.rest.user.management.activation.UserActivationResponseData;
+import web.rest.user.management.passwordchange.PasswordChangeRequestData;
 import web.rest.user.management.register.UserRegistrationRequestData;
 import web.rest.user.management.register.UserRegistrationResponseData;
 
@@ -48,7 +50,7 @@ public class UserManagementController {
 				responseData = this.userManagementUtil.createSuccessfulRegistrationResponse(locale);
 				httpStatus = HttpStatus.CREATED;
 			} catch (Exception e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(), e);
 				responseData = this.userManagementUtil.createFailedRegistrationResponse(locale);
 				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
@@ -71,10 +73,21 @@ public class UserManagementController {
 						this.userManagementUtil.createFailedActivationResponse(locale), HttpStatus.BAD_REQUEST);
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 			return new ResponseEntity<UserActivationResponseData>(
 					this.userManagementUtil.createFailedActivationResponse(locale), HttpStatus.BAD_REQUEST);
 		}
+	}
+
+	@PreAuthorize("hasAuthority('USER')")
+	@RequestMapping(value = "/change_password", method = RequestMethod.POST)
+	public String changePassword(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@RequestBody PasswordChangeRequestData passwordData) {
+
+		return this.userManagementUtil
+				.changeUserPassword(SecurityContextHolder.getContext().getAuthentication().getName(),
+						passwordData.getOldPassword(), passwordData.getNewPassword())
+				.name();
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -98,7 +111,7 @@ public class UserManagementController {
 				responseData = this.userManagementUtil.createSuccessfulRegistrationResponse(locale);
 				httpStatus = HttpStatus.CREATED;
 			} catch (Exception e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(), e);
 				responseData = this.userManagementUtil.createFailedRegistrationResponse(locale);
 				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 			}
