@@ -3,14 +3,11 @@ package web.rest.user.management;
 import java.util.List;
 import java.util.Locale;
 
-import javax.mail.MessagingException;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +28,6 @@ public class UserManagementUtil {
 	private UserDao userDao;
 
 	@Autowired
-	private MessageSource messageSource;
-
-	@Autowired
 	private BCryptPasswordEncoder encoder;
 
 	@Autowired
@@ -42,85 +36,73 @@ public class UserManagementUtil {
 	@Value("${user-management.activation-string-length}")
 	private int activationStringLength;
 
-	public UserRegistrationResponseData validateRegistrationData(UserRegistrationRequestData registrationData,
-			Locale locale) {
+	public UserRegistrationResponseData.ResponseState registerNewUser(UserRegistrationRequestData registrationData) {
 
-		if (!this.isLoginUnique(registrationData.getLogin())) {
-			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.LOGIN_ALREADY_TAKEN,
-					this.messageSource.getMessage("userManagement.loginTaken", null, null, locale));
+		try {
+			if (!this.isLoginUnique(registrationData.getLogin())) {
+				return UserRegistrationResponseData.ResponseState.LOGIN_ALREADY_TAKEN;
+			}
+			if (!this.isEmailUnique(registrationData.getEmail())) {
+				return UserRegistrationResponseData.ResponseState.EMAIL_ALREADY_TAKEN;
+			}
+			if (!this.isLoginValid(registrationData.getLogin())) {
+				return UserRegistrationResponseData.ResponseState.LOGIN_INVALID;
+			}
+			if (!this.isEmailValid(registrationData.getEmail())) {
+				return UserRegistrationResponseData.ResponseState.EMAIL_INVALID;
+			}
+			if (!this.isPasswordValid(registrationData.getPassword())) {
+				return UserRegistrationResponseData.ResponseState.PASSWORD_INVALID;
+			}
+
+			User user = new User(null, registrationData.getLogin(), registrationData.getEmail(),
+					this.encoder.encode(registrationData.getPassword()));
+			user.setActivationString(this.generateActivationString());
+			this.userDao.addUser(user);
+
+			return UserRegistrationResponseData.ResponseState.CREATED;
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return UserRegistrationResponseData.ResponseState.UNKNOWN_ERROR;
 		}
-		if (!this.isEmailUnique(registrationData.getEmail())) {
-			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.EMAIL_ALREADY_TAKEN,
-					this.messageSource.getMessage("userManagement.emailTaken", null, null, locale));
+
+	}
+
+	public void sendActivationEmail(Locale locale, String login) {
+
+		try {
+			User user = this.getSingleUserByLogin(login);
+			this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(),
+					locale);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
-		if (!this.isLoginValid(registrationData.getLogin())) {
-			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.LOGIN_INVALID,
-					this.messageSource.getMessage("userManagement.loginInvalid", null, null, locale));
-		}
-		if (!this.isEmailValid(registrationData.getEmail())) {
-			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.EMAIL_INVALID,
-					this.messageSource.getMessage("userManagement.emailInvalid", null, null, locale));
-		}
-		if (!this.isPasswordValid(registrationData.getPassword())) {
-			return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.PASSWORD_INVALID,
-					this.messageSource.getMessage("userManagement.passwordInvalid", null, null, locale));
-		}
-
-		return null;
 	}
 
-	public UserRegistrationResponseData createSuccessfulRegistrationResponse(Locale locale) {
-		return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.CREATED,
-				this.messageSource.getMessage("userManagement.userCreated", null, null, locale));
-	}
+	public UserActivationResponseData.ResponseState performUserActivation(String login, String activationString) {
 
-	public UserRegistrationResponseData createFailedRegistrationResponse(Locale locale) {
-		return new UserRegistrationResponseData(UserRegistrationResponseData.ResponseState.UNKNOWN_ERROR,
-				this.messageSource.getMessage("userManagement.unknownError", null, null, locale));
-	}
-
-	public UserActivationResponseData createSuccessfulActivationResponse(Locale locale) {
-		return new UserActivationResponseData(UserActivationResponseData.ResponseState.ACTIVATED,
-				this.messageSource.getMessage("userManagement.activationSuccess", null, null, locale));
-	}
-
-	public UserActivationResponseData createFailedActivationResponse(Locale locale) {
-		return new UserActivationResponseData(UserActivationResponseData.ResponseState.FAILED,
-				this.messageSource.getMessage("userManagement.activationFail", null, null, locale));
-	}
-
-	/**
-	 * Encode password, generate activation string, put all in DB and send
-	 * activation email
-	 * 
-	 * @param userData
-	 * @throws MessagingException
-	 */
-	public void addNewUser(UserRegistrationRequestData userData, Locale locale) throws MessagingException {
-		User user = new User(null, userData.getLogin(), userData.getEmail(),
-				this.encoder.encode(userData.getPassword()));
-		user.setActivationString(this.generateActivationString());
-		this.userDao.addUser(user);
-
-		this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
-	}
-
-	public boolean performUserActivation(String login, String activationString) {
-		User user = this.getSingleUserByLogin(login);
-		if (activationString.equals(user.getActivationString())) {
-			user.setActivationString(null);
-			this.userDao.updateUser(user);
-			return true;
-		} else {
-			return false;
+		try {
+			User user = this.getSingleUserByLogin(login);
+			if (activationString.equals(user.getActivationString())) {
+				user.setActivationString(null);
+				this.userDao.updateUser(user);
+				return UserActivationResponseData.ResponseState.ACTIVATED;
+			} else {
+				return UserActivationResponseData.ResponseState.FAILED;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return UserActivationResponseData.ResponseState.UNKNOWN_ERROR;
 		}
 	}
 
 	public PasswordChangeResponseData.ResponseState changeUserPassword(String login, String oldPassword,
 			String newPassword) {
-		User user = this.getSingleUserByLogin(login);
 
 		try {
+			User user = this.getSingleUserByLogin(login);
+
 			if (!this.encoder.matches(oldPassword, user.getPassword())) {
 				return PasswordChangeResponseData.ResponseState.PASSWORD_INVALID;
 			} else if (!this.isPasswordValid(newPassword)) {

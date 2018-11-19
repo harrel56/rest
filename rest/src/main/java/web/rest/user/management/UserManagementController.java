@@ -5,7 +5,6 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import web.rest.user.management.activation.UserActivationResponseData;
 import web.rest.user.management.passwordchange.PasswordChangeRequestData;
+import web.rest.user.management.passwordchange.PasswordChangeResponseData;
 import web.rest.user.management.register.UserRegistrationRequestData;
 import web.rest.user.management.register.UserRegistrationResponseData;
 
@@ -25,38 +25,27 @@ import web.rest.user.management.register.UserRegistrationResponseData;
 @RequestMapping("/user-management")
 public class UserManagementController {
 
+	@SuppressWarnings("unused")
 	private static transient final Logger logger = LoggerFactory.getLogger(UserManagementController.class);
 
 	@Autowired
 	private UserManagementUtil userManagementUtil;
+
+	@Autowired
+	private UserManagementResponseCreator responseCreator;
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<UserRegistrationResponseData> register(
 			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestBody UserRegistrationRequestData userData) {
 
-		UserRegistrationResponseData responseData = null;
-		HttpStatus httpStatus = null;
+		UserRegistrationResponseData.ResponseState state = this.userManagementUtil.registerNewUser(userData);
 
-		UserRegistrationResponseData badRequestResponse = this.userManagementUtil.validateRegistrationData(userData,
-				locale);
-		if (badRequestResponse != null) {
-			responseData = badRequestResponse;
-			httpStatus = HttpStatus.BAD_REQUEST;
-		} else {
-
-			try {
-				this.userManagementUtil.addNewUser(userData, locale);
-				responseData = this.userManagementUtil.createSuccessfulRegistrationResponse(locale);
-				httpStatus = HttpStatus.CREATED;
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-				responseData = this.userManagementUtil.createFailedRegistrationResponse(locale);
-				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-			}
+		if (state == UserRegistrationResponseData.ResponseState.CREATED) {
+			this.userManagementUtil.sendActivationEmail(locale, userData.getLogin());
 		}
 
-		return new ResponseEntity<UserRegistrationResponseData>(responseData, httpStatus);
+		return this.responseCreator.createRegistrationResponse(locale, state);
 	}
 
 	@RequestMapping(value = "/activate", method = RequestMethod.GET)
@@ -64,59 +53,22 @@ public class UserManagementController {
 			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @RequestParam String login,
 			@RequestParam("a_str") String activationString) {
 
-		try {
-			if (this.userManagementUtil.performUserActivation(login, activationString)) {
-				return new ResponseEntity<UserActivationResponseData>(
-						this.userManagementUtil.createSuccessfulActivationResponse(locale), HttpStatus.OK);
-			} else {
-				return new ResponseEntity<UserActivationResponseData>(
-						this.userManagementUtil.createFailedActivationResponse(locale), HttpStatus.BAD_REQUEST);
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			return new ResponseEntity<UserActivationResponseData>(
-					this.userManagementUtil.createFailedActivationResponse(locale), HttpStatus.BAD_REQUEST);
-		}
+		UserActivationResponseData.ResponseState state = this.userManagementUtil.performUserActivation(login,
+				activationString);
+
+		return this.responseCreator.createActivationResponse(locale, state);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
 	@RequestMapping(value = "/change_password", method = RequestMethod.POST)
-	public String changePassword(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+	public ResponseEntity<PasswordChangeResponseData> changePassword(
+			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestBody PasswordChangeRequestData passwordData) {
 
-		return this.userManagementUtil
-				.changeUserPassword(SecurityContextHolder.getContext().getAuthentication().getName(),
-						passwordData.getOldPassword(), passwordData.getNewPassword())
-				.name();
-	}
+		String login = SecurityContextHolder.getContext().getAuthentication().getName();
+		PasswordChangeResponseData.ResponseState state = this.userManagementUtil.changeUserPassword(login,
+				passwordData.getOldPassword(), passwordData.getNewPassword());
 
-	@PreAuthorize("hasAuthority('ADMIN')")
-	@RequestMapping(value = "/registerAuth", method = RequestMethod.POST)
-	public ResponseEntity<UserRegistrationResponseData> registerAuth(
-			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@RequestBody UserRegistrationRequestData userData) {
-
-		UserRegistrationResponseData responseData = null;
-		HttpStatus httpStatus = null;
-
-		UserRegistrationResponseData badRequestResponse = this.userManagementUtil.validateRegistrationData(userData,
-				locale);
-		if (badRequestResponse != null) {
-			responseData = badRequestResponse;
-			httpStatus = HttpStatus.BAD_REQUEST;
-		} else {
-
-			try {
-				this.userManagementUtil.addNewUser(userData, locale);
-				responseData = this.userManagementUtil.createSuccessfulRegistrationResponse(locale);
-				httpStatus = HttpStatus.CREATED;
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-				responseData = this.userManagementUtil.createFailedRegistrationResponse(locale);
-				httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-			}
-		}
-
-		return new ResponseEntity<UserRegistrationResponseData>(responseData, httpStatus);
+		return this.responseCreator.createPasswordChangeResponse(locale, state);
 	}
 }

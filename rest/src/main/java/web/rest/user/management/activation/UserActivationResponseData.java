@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class UserActivationResponseData implements Serializable {
 
 	public static enum ResponseState {
-		ACTIVATED, FAILED
+		ACTIVATED, FAILED, UNKNOWN_ERROR
 	}
 
 	private final ResponseState state;

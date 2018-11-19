@@ -6,7 +6,7 @@ import java.io.Serializable;
 public class PasswordChangeResponseData implements Serializable {
 
 	public static enum ResponseState {
-		PASSWORD_INVALID, NEW_PASSWORD_INVALID, UNKNOWN_ERROR, CHANGED
+		CHANGED, PASSWORD_INVALID, NEW_PASSWORD_INVALID, UNKNOWN_ERROR
 	}
 
 	private final ResponseState state;
