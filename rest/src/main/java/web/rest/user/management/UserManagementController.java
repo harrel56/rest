@@ -2,6 +2,8 @@ package web.rest.user.management;
 
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,7 @@ public class UserManagementController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ResponseEntity<UserRegistrationResponseData> register(
 			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@RequestBody UserRegistrationRequestData userData) {
+			@Valid @RequestBody UserRegistrationRequestData userData) {
 
 		UserRegistrationResponseData.ResponseState state = this.userManagementUtil.registerNewUser(userData);
 
@@ -63,7 +65,7 @@ public class UserManagementController {
 	@RequestMapping(value = "/change_password", method = RequestMethod.POST)
 	public ResponseEntity<PasswordChangeResponseData> changePassword(
 			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@RequestBody PasswordChangeRequestData passwordData) {
+			@Valid @RequestBody PasswordChangeRequestData passwordData) {
 
 		String login = SecurityContextHolder.getContext().getAuthentication().getName();
 		PasswordChangeResponseData.ResponseState state = this.userManagementUtil.changeUserPassword(login,
