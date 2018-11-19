@@ -100,6 +100,10 @@ public class UserManagementUtil {
 	public PasswordChangeResponseData.ResponseState changeUserPassword(String login, String oldPassword,
 			String newPassword) {
 
+		if (oldPassword.equals(newPassword)) {
+			return PasswordChangeResponseData.ResponseState.PASSWORD_THE_SAME;
+		}
+
 		try {
 			User user = this.getSingleUserByLogin(login);
 

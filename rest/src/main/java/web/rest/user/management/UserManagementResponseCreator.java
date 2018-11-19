@@ -95,6 +95,11 @@ public class UserManagementResponseCreator {
 					new PasswordChangeResponseData(state,
 							this.messageSource.getMessage("userManagement.passwordChanged", null, locale)),
 					HttpStatus.OK);
+		case PASSWORD_THE_SAME:
+			return new ResponseEntity<>(
+					new PasswordChangeResponseData(state,
+							this.messageSource.getMessage("userManagement.passwordTheSame", null, locale)),
+					HttpStatus.BAD_REQUEST);
 		case PASSWORD_INVALID:
 			return new ResponseEntity<>(
 					new PasswordChangeResponseData(state,
