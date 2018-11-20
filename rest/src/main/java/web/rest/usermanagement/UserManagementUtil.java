@@ -1,6 +1,5 @@
 package web.rest.usermanagement;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -72,7 +71,7 @@ public class UserManagementUtil {
 	public void sendActivationEmail(Locale locale, String login) {
 
 		try {
-			User user = this.getSingleUserByLogin(login);
+			User user = this.userDao.findByLogin(login);
 			this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -82,7 +81,7 @@ public class UserManagementUtil {
 	public ResendActivationResponseData.ResponseState resendActivation(Locale locale, String login) {
 
 		try {
-			User user = this.getSingleUserByLogin(login);
+			User user = this.userDao.findByLogin(login);
 			if (user != null) {
 				if (user.getActivationString() != null) {
 
@@ -106,7 +105,7 @@ public class UserManagementUtil {
 	public UserActivationResponseData.ResponseState performUserActivation(String login, String activationString) {
 
 		try {
-			User user = this.getSingleUserByLogin(login);
+			User user = this.userDao.findByLogin(login);
 			if (activationString.equals(user.getActivationString())) {
 				user.setActivationString(null);
 				this.userDao.updateUser(user);
@@ -127,7 +126,7 @@ public class UserManagementUtil {
 		}
 
 		try {
-			User user = this.getSingleUserByLogin(login);
+			User user = this.userDao.findByLogin(login);
 
 			if (!this.encoder.matches(oldPassword, user.getPassword())) {
 				return PasswordChangeResponseData.ResponseState.PASSWORD_INVALID;
@@ -144,17 +143,8 @@ public class UserManagementUtil {
 		}
 	}
 
-	private User getSingleUserByLogin(String login) {
-		List<User> userList = this.userDao.findByLogin(login);
-		if (userList.isEmpty()) {
-			return null;
-		} else {
-			return userList.get(0);
-		}
-	}
-
 	private boolean isLoginUnique(String login) {
-		return this.userDao.findByLogin(login).isEmpty();
+		return this.userDao.findByLogin(login) == null;
 	}
 
 	private boolean isEmailUnique(String email) {

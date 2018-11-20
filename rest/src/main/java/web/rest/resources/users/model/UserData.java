@@ -10,12 +10,14 @@ public class UserData implements Serializable {
 	private final String login;
 	private final Timestamp createTime;
 	private final Timestamp modifyTime;
+	private final UserDetailsData userDetails;
 
-	public UserData(Long id, String login, Timestamp createTime, Timestamp modifyTime) {
+	public UserData(Long id, String login, Timestamp createTime, Timestamp modifyTime, UserDetailsData userDetails) {
 		this.id = id;
 		this.login = login;
 		this.createTime = createTime;
 		this.modifyTime = modifyTime;
+		this.userDetails = userDetails;
 	}
 
 	public Long getId() {
@@ -34,4 +36,7 @@ public class UserData implements Serializable {
 		return this.modifyTime;
 	}
 
+	public UserDetailsData getUserDetails() {
+		return this.userDetails;
+	}
 }

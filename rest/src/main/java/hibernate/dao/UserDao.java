@@ -39,12 +39,18 @@ public class UserDao {
 	}
 
 	@Transactional(readOnly = true)
-	public List<User> findByLogin(String login) {
+	public User findByLogin(String login) {
 		CriteriaBuilder builder = this.em.getCriteriaBuilder();
 		CriteriaQuery<User> crit = builder.createQuery(User.class);
 		Root<User> root = crit.from(User.class);
 		crit.where(builder.equal(root.get("login"), login));
-		return this.em.createQuery(crit).getResultList();
+
+		List<User> users = this.em.createQuery(crit).getResultList();
+		if (!users.isEmpty()) {
+			return users.get(0);
+		} else {
+			return null;
+		}
 	}
 
 	@Transactional(readOnly = true)

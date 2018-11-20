@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import hibernate.dao.UserDao;
 import hibernate.entities.User;
 import web.rest.resources.users.model.UserData;
+import web.rest.resources.users.model.UserDetailsData;
 
 @Service
 public class UsersUtil {
@@ -22,9 +23,32 @@ public class UsersUtil {
 	}
 
 	public UserData getUserByLogin(String login) {
-		List<User> users = this.userDao.findByLogin(login);
-		if (!users.isEmpty()) {
-			return this.toDataObject(users.get(0));
+		User user = this.userDao.findByLogin(login);
+		if (user != null) {
+			return this.toDataObject(user);
+		} else {
+			throw new ResourceNotFoundException();
+		}
+	}
+
+	public void updateUserDetails(String login, UserDetailsData userDetails) {
+		User user = this.userDao.findByLogin(login);
+
+		if (user != null) {
+			if (userDetails.getName() != null) {
+				user.setName(userDetails.getName());
+			}
+			if (userDetails.getSurname() != null) {
+				user.setSurname(userDetails.getSurname());
+			}
+			if (userDetails.getLocation() != null) {
+				user.setLocation(userDetails.getLocation());
+			}
+			if (userDetails.getDateOfBirth() != null) {
+				user.setDateOfBirth(userDetails.getDateOfBirth());
+			}
+
+			this.userDao.updateUser(user);
 		} else {
 			throw new ResourceNotFoundException();
 		}
@@ -39,6 +63,7 @@ public class UsersUtil {
 	}
 
 	private UserData toDataObject(User user) {
-		return new UserData(user.getId(), user.getLogin(), user.getCreateTime(), user.getModifyTime());
+		return new UserData(user.getId(), user.getLogin(), user.getCreateTime(), user.getModifyTime(),
+				new UserDetailsData(user.getName(), user.getSurname(), user.getLocation(), user.getDateOfBirth()));
 	}
 }

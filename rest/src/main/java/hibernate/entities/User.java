@@ -2,6 +2,7 @@ package hibernate.entities;
 // Generated Nov 3, 2018 12:51:33 PM by Hibernate Tools 5.2.11.Final
 
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 
 /**
@@ -22,8 +24,7 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @SuppressWarnings("serial")
 @Entity
-@Table(name = "USER", uniqueConstraints = { @UniqueConstraint(columnNames = "EMAIL"),
-		@UniqueConstraint(columnNames = "LOGIN") })
+@Table(name = "USER", uniqueConstraints = { @UniqueConstraint(columnNames = "EMAIL"), @UniqueConstraint(columnNames = "LOGIN") })
 public class User implements Serializable {
 
 	private Long id;
@@ -34,6 +35,10 @@ public class User implements Serializable {
 	private Timestamp createTime;
 	private Timestamp modifyTime;
 	private String activationString;
+	private String name;
+	private String surname;
+	private String location;
+	private Date dateOfBirth;
 
 	public User() {
 	}
@@ -136,6 +141,43 @@ public class User implements Serializable {
 
 	public void setActivationString(String activationString) {
 		this.activationString = activationString;
+	}
+
+	@Column(name = "NAME", length = 2000000000)
+	public String getName() {
+		return this.name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Column(name = "SURNAME", length = 2000000000)
+	public String getSurname() {
+		return this.surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	@Column(name = "LOCATION", length = 2000000000)
+	public String getLocation() {
+		return this.location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
+	@Type(type = "org.hibernate.type.DateType")
+	@Column(name = "DATE_OF_BIRTH")
+	public Date getDateOfBirth() {
+		return this.dateOfBirth;
+	}
+
+	public void setDateOfBirth(Date dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
 	}
 
 }

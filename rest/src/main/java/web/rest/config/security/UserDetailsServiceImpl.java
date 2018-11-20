@@ -27,20 +27,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		boolean accountEnabled = true;
-		List<User> userList = this.userDao.findByLogin(username);
+		User user = this.userDao.findByLogin(username);
 
-		if (userList.isEmpty()) {
+		if (user == null) {
 			throw new UsernameNotFoundException("Invalid login or password");
-		} else if (userList.get(0).getActivationString() != null) {
+		} else if (user.getActivationString() != null) {
 			accountEnabled = false;
 		}
-
-		User user = userList.get(0);
 
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(user.getRole()));
 
-		return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(),
-				accountEnabled, true, true, true, authorities);
+		return new org.springframework.security.core.userdetails.User(user.getLogin(), user.getPassword(), accountEnabled, true, true, true,
+				authorities);
 	}
 }
