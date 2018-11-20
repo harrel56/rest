@@ -30,6 +30,15 @@ public class UserDao {
 	}
 
 	@Transactional(readOnly = true)
+	public List<User> getUsers() {
+		CriteriaBuilder builder = this.em.getCriteriaBuilder();
+		CriteriaQuery<User> crit = builder.createQuery(User.class);
+		Root<User> root = crit.from(User.class);
+		crit.select(root);
+		return this.em.createQuery(crit).getResultList();
+	}
+
+	@Transactional(readOnly = true)
 	public List<User> findByLogin(String login) {
 		CriteriaBuilder builder = this.em.getCriteriaBuilder();
 		CriteriaQuery<User> crit = builder.createQuery(User.class);

@@ -17,7 +17,8 @@
 	<!-- User management -->
 	<bean id = "userDao" class = "hibernate.dao.UserDao" />
 
-	<bean id = "userManagementUtil" class = "web.rest.user.management.UserManagementUtil" />
+	<bean id = "userManagementUtil" class = "web.rest.usermanagement.UserManagementUtil" />
+	<bean id = "usersUtil" class = "web.rest.users.UsersUtil" />
 	
 	
 	<!-- Spring + Hibernate transaction management -->
@@ -51,7 +52,7 @@
 	<bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
 		<property name="hideUserNotFoundExceptions" value="false" />
 		<property name="userDetailsService">
-			<bean id="userDetailsServiceImpl" class="web.rest.security.UserDetailsServiceImpl" />
+			<bean id="userDetailsServiceImpl" class="web.rest.config.security.UserDetailsServiceImpl" />
 		</property>
 	</bean>
 	
