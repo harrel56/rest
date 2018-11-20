@@ -1,4 +1,4 @@
-package web.rest.users;
+package web.rest.resources.users;
 
 import java.util.List;
 import java.util.Locale;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import web.rest.users.model.UserData;
+import web.rest.resources.users.model.UserData;
 
 @RestController
 @RequestMapping("/users")
@@ -36,11 +36,6 @@ public class UsersController {
 	public ResponseEntity<UserData> getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@PathVariable String login) {
 
-		UserData user = this.usersUtil.getUserByLogin(login);
-		if (user != null) {
-			return new ResponseEntity<UserData>(user, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<UserData>(user, HttpStatus.NOT_FOUND);
-		}
+		return new ResponseEntity<>(this.usersUtil.getUserByLogin(login), HttpStatus.OK);
 	}
 }

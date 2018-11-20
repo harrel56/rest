@@ -1,4 +1,4 @@
-package web.rest.users.model;
+package web.rest.resources.users.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
