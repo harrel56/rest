@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import hibernate.dao.UserDao;
 import hibernate.entities.User;
 import web.rest.email.EmailUtils;
+import web.rest.user.management.activation.ResendActivationResponseData;
 import web.rest.user.management.activation.UserActivationResponseData;
 import web.rest.user.management.passwordchange.PasswordChangeResponseData;
 import web.rest.user.management.register.UserRegistrationRequestData;
@@ -55,8 +56,7 @@ public class UserManagementUtil {
 				return UserRegistrationResponseData.ResponseState.PASSWORD_INVALID;
 			}
 
-			User user = new User(null, registrationData.getLogin(), registrationData.getEmail(),
-					this.encoder.encode(registrationData.getPassword()));
+			User user = new User(null, registrationData.getLogin(), registrationData.getEmail(), this.encoder.encode(registrationData.getPassword()));
 			user.setActivationString(this.generateActivationString());
 			this.userDao.addUser(user);
 
@@ -73,10 +73,33 @@ public class UserManagementUtil {
 
 		try {
 			User user = this.getSingleUserByLogin(login);
-			this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(),
-					locale);
+			this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+		}
+	}
+
+	public ResendActivationResponseData.ResponseState resendActivation(Locale locale, String login) {
+
+		try {
+			User user = this.getSingleUserByLogin(login);
+			if (user != null) {
+				if (user.getActivationString() != null) {
+
+					user.setActivationString(this.generateActivationString());
+					this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
+					this.userDao.updateUser(user);
+					return ResendActivationResponseData.ResponseState.RESENT;
+				} else {
+					return ResendActivationResponseData.ResponseState.USER_ALREADY_ACTIVATED;
+				}
+
+			} else {
+				return ResendActivationResponseData.ResponseState.USER_INVALID;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return ResendActivationResponseData.ResponseState.UNKNOWN_ERROR;
 		}
 	}
 
@@ -97,8 +120,7 @@ public class UserManagementUtil {
 		}
 	}
 
-	public PasswordChangeResponseData.ResponseState changeUserPassword(String login, String oldPassword,
-			String newPassword) {
+	public PasswordChangeResponseData.ResponseState changeUserPassword(String login, String oldPassword, String newPassword) {
 
 		if (oldPassword.equals(newPassword)) {
 			return PasswordChangeResponseData.ResponseState.PASSWORD_THE_SAME;

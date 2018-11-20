@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import web.rest.user.management.activation.ResendActivationResponseData;
 import web.rest.user.management.activation.UserActivationResponseData;
 import web.rest.user.management.passwordchange.PasswordChangeRequestData;
 import web.rest.user.management.passwordchange.PasswordChangeResponseData;
@@ -37,8 +38,7 @@ public class UserManagementController {
 	private UserManagementResponseCreator responseCreator;
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public ResponseEntity<UserRegistrationResponseData> register(
-			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+	public ResponseEntity<UserRegistrationResponseData> register(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@Valid @RequestBody UserRegistrationRequestData userData) {
 
 		UserRegistrationResponseData.ResponseState state = this.userManagementUtil.registerNewUser(userData);
@@ -50,26 +50,32 @@ public class UserManagementController {
 		return this.responseCreator.createRegistrationResponse(locale, state);
 	}
 
-	@RequestMapping(value = "/activate", method = RequestMethod.GET)
-	public ResponseEntity<UserActivationResponseData> activate(
-			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @RequestParam String login,
-			@RequestParam("a_str") String activationString) {
+	@RequestMapping(value = "/resend_activation", method = RequestMethod.GET)
+	public ResponseEntity<ResendActivationResponseData> resendActivation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@RequestParam String login) {
 
-		UserActivationResponseData.ResponseState state = this.userManagementUtil.performUserActivation(login,
-				activationString);
+		ResendActivationResponseData.ResponseState state = this.userManagementUtil.resendActivation(locale, login);
+
+		return this.responseCreator.createResendActivationResponse(locale, state);
+	}
+
+	@RequestMapping(value = "/activate", method = RequestMethod.GET)
+	public ResponseEntity<UserActivationResponseData> activate(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@RequestParam String login, @RequestParam("a_str") String activationString) {
+
+		UserActivationResponseData.ResponseState state = this.userManagementUtil.performUserActivation(login, activationString);
 
 		return this.responseCreator.createActivationResponse(locale, state);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
 	@RequestMapping(value = "/change_password", method = RequestMethod.POST)
-	public ResponseEntity<PasswordChangeResponseData> changePassword(
-			@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+	public ResponseEntity<PasswordChangeResponseData> changePassword(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@Valid @RequestBody PasswordChangeRequestData passwordData) {
 
 		String login = SecurityContextHolder.getContext().getAuthentication().getName();
-		PasswordChangeResponseData.ResponseState state = this.userManagementUtil.changeUserPassword(login,
-				passwordData.getOldPassword(), passwordData.getNewPassword());
+		PasswordChangeResponseData.ResponseState state = this.userManagementUtil.changeUserPassword(login, passwordData.getOldPassword(),
+				passwordData.getNewPassword());
 
 		return this.responseCreator.createPasswordChangeResponse(locale, state);
 	}
