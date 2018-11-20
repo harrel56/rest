@@ -20,6 +20,15 @@ public class UsersUtil {
 		return this.toDataObjectList(this.userDao.getUsers());
 	}
 
+	public UserData getUserByLogin(String login) {
+		List<User> users = this.userDao.findByLogin(login);
+		if (!users.isEmpty()) {
+			return this.toDataObject(users.get(0));
+		} else {
+			return null;
+		}
+	}
+
 	private List<UserData> toDataObjectList(List<User> users) {
 		List<UserData> userDatas = new ArrayList<>(users.size());
 		for (User user : users) {

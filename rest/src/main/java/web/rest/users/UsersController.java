@@ -6,6 +6,8 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,15 +26,21 @@ public class UsersController {
 	@Autowired
 	UsersUtil usersUtil;
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
 	public List<UserData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
 
 		return this.usersUtil.getUsers();
 	}
 
 	@RequestMapping(value = "/{login}", method = RequestMethod.GET)
-	public String getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable String login) {
+	public ResponseEntity<UserData> getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@PathVariable String login) {
 
-		return "NOPE ;)";
+		UserData user = this.usersUtil.getUserByLogin(login);
+		if (user != null) {
+			return new ResponseEntity<UserData>(user, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<UserData>(user, HttpStatus.NOT_FOUND);
+		}
 	}
 }
