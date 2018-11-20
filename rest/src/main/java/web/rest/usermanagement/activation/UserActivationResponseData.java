@@ -1,18 +1,18 @@
-package web.rest.user.management.activation;
+package web.rest.usermanagement.activation;
 
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class ResendActivationResponseData implements Serializable {
+public class UserActivationResponseData implements Serializable {
 
 	public static enum ResponseState {
-		RESENT, USER_ALREADY_ACTIVATED, USER_INVALID, UNKNOWN_ERROR
+		ACTIVATED, FAILED, UNKNOWN_ERROR
 	}
 
 	private final ResponseState state;
 	private final String message;
 
-	public ResendActivationResponseData(ResponseState state, String message) {
+	public UserActivationResponseData(ResponseState state, String message) {
 		this.state = state;
 		this.message = message;
 	}

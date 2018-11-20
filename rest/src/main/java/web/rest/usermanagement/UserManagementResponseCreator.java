@@ -1,4 +1,4 @@
-package web.rest.user.management;
+package web.rest.usermanagement;
 
 import java.util.Locale;
 
@@ -8,10 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import web.rest.user.management.activation.ResendActivationResponseData;
-import web.rest.user.management.activation.UserActivationResponseData;
-import web.rest.user.management.passwordchange.PasswordChangeResponseData;
-import web.rest.user.management.register.UserRegistrationResponseData;
+import web.rest.usermanagement.activation.ResendActivationResponseData;
+import web.rest.usermanagement.activation.UserActivationResponseData;
+import web.rest.usermanagement.passwordchange.PasswordChangeResponseData;
+import web.rest.usermanagement.register.UserRegistrationResponseData;
 
 @Service
 public class UserManagementResponseCreator {

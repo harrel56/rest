@@ -1,4 +1,4 @@
-package web.rest.email;
+package web.rest.tools.email;
 
 import java.util.Locale;
 import java.util.Properties;
@@ -36,15 +36,14 @@ public class EmailUtils {
 	private String password;
 
 	@Async
-	public void sendActivationEmailAsync(String recipient, String login, String activationString, Locale locale)
-			throws MessagingException {
+	public void sendActivationEmailAsync(String recipient, String login, String activationString, Locale locale) throws MessagingException {
 
 		Message msg = this.prepareMimeMessage();
 		msg.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient));
 
 		msg.setSubject(this.messageSource.getMessage("userManagement.activationMailSubject", null, locale));
-		msg.setContent(this.messageSource.getMessage("userManagement.activationMailBody",
-				new Object[] { activationString }, locale), "text/plain");
+		msg.setContent(this.messageSource.getMessage("userManagement.activationMailBody", new Object[] { login, activationString }, locale),
+				"text/plain");
 		Transport.send(msg);
 	}
 

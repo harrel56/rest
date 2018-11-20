@@ -1,4 +1,4 @@
-package web.rest.user.management;
+package web.rest.usermanagement;
 
 import java.util.Locale;
 
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import web.rest.user.management.activation.ResendActivationResponseData;
-import web.rest.user.management.activation.UserActivationResponseData;
-import web.rest.user.management.passwordchange.PasswordChangeRequestData;
-import web.rest.user.management.passwordchange.PasswordChangeResponseData;
-import web.rest.user.management.register.UserRegistrationRequestData;
-import web.rest.user.management.register.UserRegistrationResponseData;
+import web.rest.usermanagement.activation.ResendActivationResponseData;
+import web.rest.usermanagement.activation.UserActivationResponseData;
+import web.rest.usermanagement.passwordchange.PasswordChangeRequestData;
+import web.rest.usermanagement.passwordchange.PasswordChangeResponseData;
+import web.rest.usermanagement.register.UserRegistrationRequestData;
+import web.rest.usermanagement.register.UserRegistrationResponseData;
 
 @RestController
 @RequestMapping("/user-management")
@@ -50,7 +50,7 @@ public class UserManagementController {
 		return this.responseCreator.createRegistrationResponse(locale, state);
 	}
 
-	@RequestMapping(value = "/resend_activation", method = RequestMethod.GET)
+	@RequestMapping(value = "/resend-activation", method = RequestMethod.GET)
 	public ResponseEntity<ResendActivationResponseData> resendActivation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestParam String login) {
 
@@ -69,7 +69,7 @@ public class UserManagementController {
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/change_password", method = RequestMethod.POST)
+	@RequestMapping(value = "/change-password", method = RequestMethod.POST)
 	public ResponseEntity<PasswordChangeResponseData> changePassword(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@Valid @RequestBody PasswordChangeRequestData passwordData) {
 

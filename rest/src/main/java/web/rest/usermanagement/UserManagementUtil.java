@@ -1,4 +1,4 @@
-package web.rest.user.management;
+package web.rest.usermanagement;
 
 import java.util.List;
 import java.util.Locale;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Service;
 
 import hibernate.dao.UserDao;
 import hibernate.entities.User;
-import web.rest.email.EmailUtils;
-import web.rest.user.management.activation.ResendActivationResponseData;
-import web.rest.user.management.activation.UserActivationResponseData;
-import web.rest.user.management.passwordchange.PasswordChangeResponseData;
-import web.rest.user.management.register.UserRegistrationRequestData;
-import web.rest.user.management.register.UserRegistrationResponseData;
+import web.rest.tools.email.EmailUtils;
+import web.rest.usermanagement.activation.ResendActivationResponseData;
+import web.rest.usermanagement.activation.UserActivationResponseData;
+import web.rest.usermanagement.passwordchange.PasswordChangeResponseData;
+import web.rest.usermanagement.register.UserRegistrationRequestData;
+import web.rest.usermanagement.register.UserRegistrationResponseData;
 
 @Service
 public class UserManagementUtil {

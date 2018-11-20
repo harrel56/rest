@@ -1,18 +1,18 @@
-package web.rest.user.management.passwordchange;
+package web.rest.usermanagement.activation;
 
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
-public class PasswordChangeResponseData implements Serializable {
+public class ResendActivationResponseData implements Serializable {
 
 	public static enum ResponseState {
-		CHANGED, PASSWORD_THE_SAME, PASSWORD_INVALID, NEW_PASSWORD_INVALID, UNKNOWN_ERROR
+		RESENT, USER_ALREADY_ACTIVATED, USER_INVALID, UNKNOWN_ERROR
 	}
 
 	private final ResponseState state;
 	private final String message;
 
-	public PasswordChangeResponseData(ResponseState state, String message) {
+	public ResendActivationResponseData(ResponseState state, String message) {
 		this.state = state;
 		this.message = message;
 	}

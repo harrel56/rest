@@ -1,4 +1,4 @@
-package web.rest.user.management.passwordchange;
+package web.rest.usermanagement.passwordchange;
 
 import java.io.Serializable;
 
