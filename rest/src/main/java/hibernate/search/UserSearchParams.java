@@ -12,10 +12,20 @@ import hibernate.entities.User;
 
 public class UserSearchParams implements SearchParams<User> {
 
-	private final String login;
-	private final String name;
-	private final String surname;
-	private final String location;
+	private String login;
+	private String name;
+	private String surname;
+	private String location;
+
+	/**
+	 * Empty constructor as a shorthand for no search filtering
+	 */
+	public static UserSearchParams empty() {
+		return new UserSearchParams();
+	}
+
+	private UserSearchParams() {
+	}
 
 	public UserSearchParams(String login, String name, String surname, String location) {
 		this.login = login;
@@ -25,9 +35,8 @@ public class UserSearchParams implements SearchParams<User> {
 	}
 
 	@Override
-	public void applySearchFilters(CriteriaBuilder builder, CriteriaQuery<User> crit) {
+	public void applySearchFilters(CriteriaBuilder builder, CriteriaQuery<User> crit, Root<User> root) {
 
-		Root<User> root = crit.from(User.class);
 		List<Predicate> predicates = new ArrayList<>();
 
 		if (this.login != null) {

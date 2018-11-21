@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import hibernate.entities.User;
 import hibernate.search.SearchParams;
+import hibernate.search.UserSearchParams;
+import hibernate.sort.SortParams;
 
 @Repository
 public class UserDao {
@@ -40,11 +42,27 @@ public class UserDao {
 	}
 
 	@Transactional(readOnly = true)
-	public List<User> getUsers(SearchParams<User> params) {
+	public List<User> getUsers(SearchParams<User> searchParams) {
+		return this.getUsers(searchParams, SortParams.empty());
+	}
+
+	@Transactional(readOnly = true)
+	public List<User> getUsers(SortParams<User> sortParams) {
+		return this.getUsers(UserSearchParams.empty(), sortParams);
+	}
+
+	@Transactional(readOnly = true)
+	public List<User> getUsers(SearchParams<User> searchParams, SortParams<User> sortParams) {
 		CriteriaBuilder builder = this.em.getCriteriaBuilder();
 		CriteriaQuery<User> crit = builder.createQuery(User.class);
+		Root<User> root = crit.from(User.class);
 
-		params.applySearchFilters(builder, crit);
+		searchParams.applySearchFilters(builder, crit, root);
+		sortParams.applySortParams(builder, crit, root);
+
+//		Root<User> root = crit.from(User.class);
+//		// crit.select(root);
+//		crit.orderBy(builder.asc(root.get("location")));
 
 		return this.em.createQuery(crit).getResultList();
 	}

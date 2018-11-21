@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import hibernate.dao.UserDao;
 import hibernate.entities.User;
 import hibernate.search.UserSearchParams;
+import hibernate.sort.SortParams;
 import web.rest.resources.users.model.UserData;
 import web.rest.resources.users.model.UserDetailsData;
 
@@ -23,8 +24,8 @@ public class UsersUtil {
 		return this.toDataObjectList(this.userDao.getUsers());
 	}
 
-	public List<UserData> getUsers(UserSearchParams params) {
-		return this.toDataObjectList(this.userDao.getUsers(params));
+	public List<UserData> getUsers(UserSearchParams searchParams, SortParams<User> sortParams) {
+		return this.toDataObjectList(this.userDao.getUsers(searchParams, sortParams));
 	}
 
 	public UserData getUserByLogin(String login) {
