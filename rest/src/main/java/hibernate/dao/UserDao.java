@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import hibernate.entities.User;
+import hibernate.search.SearchParams;
 
 @Repository
 public class UserDao {
@@ -35,6 +36,16 @@ public class UserDao {
 		CriteriaQuery<User> crit = builder.createQuery(User.class);
 		Root<User> root = crit.from(User.class);
 		crit.select(root);
+		return this.em.createQuery(crit).getResultList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<User> getUsers(SearchParams<User> params) {
+		CriteriaBuilder builder = this.em.getCriteriaBuilder();
+		CriteriaQuery<User> crit = builder.createQuery(User.class);
+
+		params.applySearchFilters(builder, crit);
+
 		return this.em.createQuery(crit).getResultList();
 	}
 

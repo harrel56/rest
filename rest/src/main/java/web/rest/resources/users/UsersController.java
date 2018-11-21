@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hibernate.search.UserSearchParams;
 import web.rest.resources.users.model.UserData;
 import web.rest.resources.users.model.UserDetailsData;
 
@@ -34,9 +35,10 @@ public class UsersController {
 
 	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
 	public List<UserData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@RequestParam(name = "login", required = false) String loginRegex) {
+			@RequestParam(name = "login", required = false) String login, @RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "surname", required = false) String surname, @RequestParam(name = "location", required = false) String location) {
 
-		return this.usersUtil.getUsers();
+		return this.usersUtil.getUsers(new UserSearchParams(login, name, surname, location));
 	}
 
 	@RequestMapping(value = "/{login}", method = RequestMethod.GET)
