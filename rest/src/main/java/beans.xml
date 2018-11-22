@@ -14,11 +14,15 @@
 
 	<context:annotation-config/>
 
-	<!-- User management -->
+	<!-- Daos -->
 	<bean id = "userDao" class = "hibernate.dao.UserDao" />
+	<bean id = "LocationDao" class = "hibernate.dao.LocationDao" />
+	<bean id = "EventDao" class = "hibernate.dao.EventDao" />
 
+	<!-- Utils -->
 	<bean id = "userManagementUtil" class = "web.rest.usermanagement.UserManagementUtil" />
 	<bean id = "usersUtil" class = "web.rest.resources.users.UsersUtil" />
+	<bean id = "locationsUtil" class = "web.rest.resources.locations.LocationsUtil" />
 	
 	
 	<!-- Spring + Hibernate transaction management -->

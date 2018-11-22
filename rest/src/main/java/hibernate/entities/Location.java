@@ -12,6 +12,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -75,7 +77,8 @@ public class Location implements Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "CREATOR_USER_ID")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CREATOR_USER_ID")
 	public User getCreator() {
 		return this.creator;
 	}
@@ -102,21 +105,21 @@ public class Location implements Serializable {
 		this.description = description;
 	}
 
-	@Column(name = "LATITUDE", nullable = false, precision = 2000000000, scale = 10)
-	public double getLatitude() {
+	@Column(name = "LATITUDE", nullable = false)
+	public Double getLatitude() {
 		return this.latitude;
 	}
 
-	public void setLatitude(double latitude) {
+	public void setLatitude(Double latitude) {
 		this.latitude = latitude;
 	}
 
-	@Column(name = "LONGITUDE", nullable = false, precision = 2000000000, scale = 10)
-	public double getLongitude() {
+	@Column(name = "LONGITUDE", nullable = false)
+	public Double getLongitude() {
 		return this.longitude;
 	}
 
-	public void setLongitude(double longitude) {
+	public void setLongitude(Double longitude) {
 		this.longitude = longitude;
 	}
 

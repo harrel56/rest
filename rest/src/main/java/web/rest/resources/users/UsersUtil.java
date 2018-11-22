@@ -60,7 +60,7 @@ public class UsersUtil {
 		}
 	}
 
-	private List<UserData> toDataObjectList(List<User> users) {
+	public List<UserData> toDataObjectList(List<User> users) {
 		List<UserData> userDatas = new ArrayList<>(users.size());
 		for (User user : users) {
 			userDatas.add(this.toDataObject(user));
@@ -68,7 +68,7 @@ public class UsersUtil {
 		return userDatas;
 	}
 
-	private UserData toDataObject(User user) {
+	public UserData toDataObject(User user) {
 		return new UserData(user.getId(), user.getLogin(), user.getCreateTime(), user.getModifyTime(),
 				new UserDetailsData(user.getName(), user.getSurname(), user.getLocation(), user.getDateOfBirth()));
 	}
