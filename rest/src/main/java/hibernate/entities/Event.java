@@ -27,7 +27,7 @@ public class Event implements Serializable {
 
 	private Long id;
 	private Location location;
-	private User user;
+	private User creator;
 	private String name;
 	private String description;
 	private Timestamp startTime;
@@ -49,11 +49,11 @@ public class Event implements Serializable {
 		this.state = state;
 	}
 
-	public Event(Long id, Location location, User user, String name, String description, Timestamp startTime, Timestamp endTime, Timestamp createTime,
-			Timestamp modifyTime, String state) {
+	public Event(Long id, Location location, User creator, String name, String description, Timestamp startTime, Timestamp endTime,
+			Timestamp createTime, Timestamp modifyTime, String state) {
 		this.id = id;
 		this.location = location;
-		this.user = user;
+		this.creator = creator;
 		this.name = name;
 		this.description = description;
 		this.startTime = startTime;
@@ -86,12 +86,12 @@ public class Event implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CREATOR_USER_ID")
-	public User getUser() {
-		return this.user;
+	public User getCreator() {
+		return this.creator;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setCreator(User creator) {
+		this.creator = creator;
 	}
 
 	@Column(name = "NAME", nullable = false, length = 2000000000)

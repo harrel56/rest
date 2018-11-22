@@ -28,7 +28,7 @@ public class LocationsUtil {
 //		return this.toDataObjectList(this.locationDao.getLocations());
 //	}
 
-	private List<LocationData> toDataObjectList(List<Location> locations) {
+	public List<LocationData> toDataObjectList(List<Location> locations) {
 		List<LocationData> locationDatas = new ArrayList<>(locations.size());
 		for (Location location : locations) {
 			locationDatas.add(this.toDataObject(location));
@@ -36,7 +36,7 @@ public class LocationsUtil {
 		return locationDatas;
 	}
 
-	private LocationData toDataObject(Location location) {
+	public LocationData toDataObject(Location location) {
 		return new LocationData(location.getId(), this.usersUtil.toDataObject(location.getCreator()), location.getName(), location.getDescription(),
 				location.getLatitude(), location.getLongitude(), location.getCreateTime(), location.getModifyTime(),
 				LocationData.State.valueOf(location.getState()));
