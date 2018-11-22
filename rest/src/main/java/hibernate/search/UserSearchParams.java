@@ -52,7 +52,9 @@ public class UserSearchParams implements SearchParams<User> {
 			predicates.add(builder.like(root.get("location"), this.addWildcards(this.location)));
 		}
 
-		crit.where(predicates.toArray(new Predicate[predicates.size()]));
+		if (!predicates.isEmpty()) {
+			crit.where(predicates.toArray(new Predicate[predicates.size()]));
+		}
 	}
 
 }
