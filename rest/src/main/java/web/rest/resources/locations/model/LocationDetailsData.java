@@ -62,4 +62,5 @@ public class LocationDetailsData implements Serializable {
 	public boolean validateLongitude() {
 		return this.longitude >= -180.0 && this.longitude <= 180.0;
 	}
+
 }
