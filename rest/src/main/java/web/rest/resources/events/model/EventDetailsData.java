@@ -3,6 +3,8 @@ package web.rest.resources.events.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.validation.constraints.NotNull;
+
 @SuppressWarnings("serial")
 public class EventDetailsData implements Serializable {
 
@@ -10,10 +12,15 @@ public class EventDetailsData implements Serializable {
 		ACTIVE, DELETED
 	}
 
+	@NotNull
 	private final String name;
 	private final String description;
+
+	@NotNull
 	private final Timestamp startTime;
 	private final Timestamp endTime;
+
+	@NotNull
 	private final State state;
 
 	public EventDetailsData(String name, String description, Timestamp startTime, Timestamp endTime, State state) {

@@ -15,6 +15,7 @@ import hibernate.entities.User;
 import web.rest.resources.ImmutableDataModificationException;
 import web.rest.resources.events.EventsUtil;
 import web.rest.resources.events.model.EventData;
+import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
 import web.rest.resources.users.UsersUtil;
@@ -94,6 +95,11 @@ public class LocationsUtil {
 		location.setState(locationDetails.getState().name());
 
 		this.locationDao.updateLocation(location);
+	}
+
+	public EventData createLocationEvent(Long id, EventDetailsData eventDetails, String creatorLogin) {
+
+		return this.eventsUtil.createEvent(this.locationDao.findLocationById(id), eventDetails, creatorLogin);
 	}
 
 	public List<LocationData> toDataObjectList(List<Location> locations) {

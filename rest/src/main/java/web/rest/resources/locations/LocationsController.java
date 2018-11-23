@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import web.rest.resources.events.model.EventData;
+import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
 
@@ -69,5 +70,13 @@ public class LocationsController {
 	public List<EventData> getEventsByLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
 
 		return this.locationsUtil.getLocationEvents(id);
+	}
+
+	@PreAuthorize("hasAuthority('USER')")
+	@RequestMapping(value = "/{id}/events", method = RequestMethod.POST)
+	public EventData createEventByLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id,
+			@Valid @RequestBody EventDetailsData eventDetails) {
+
+		return this.locationsUtil.createLocationEvent(id, eventDetails, SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 }
