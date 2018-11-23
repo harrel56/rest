@@ -54,12 +54,12 @@ public class LocationDetailsData implements Serializable {
 	}
 
 	@AssertTrue
-	public boolean isLatitudeValid() {
+	public boolean validateLatitude() {
 		return this.latitude >= -90.0 && this.latitude <= 90.0;
 	}
 
 	@AssertTrue
-	public boolean isLongitudeValid() {
+	public boolean validateLongitude() {
 		return this.longitude >= -180.0 && this.longitude <= 180.0;
 	}
 }

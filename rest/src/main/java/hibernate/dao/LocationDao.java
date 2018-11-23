@@ -30,6 +30,21 @@ public class LocationDao {
 	}
 
 	@Transactional(readOnly = true)
+	public Location findLocationById(Long id) {
+		CriteriaBuilder builder = this.em.getCriteriaBuilder();
+		CriteriaQuery<Location> crit = builder.createQuery(Location.class);
+		Root<Location> root = crit.from(Location.class);
+		crit.where(builder.equal(root.get("id"), id));
+		List<Location> locations = this.em.createQuery(crit).getResultList();
+
+		if (locations != null) {
+			return locations.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@Transactional(readOnly = true)
 	public List<Location> getLocations() {
 		CriteriaBuilder builder = this.em.getCriteriaBuilder();
 		CriteriaQuery<Location> crit = builder.createQuery(Location.class);

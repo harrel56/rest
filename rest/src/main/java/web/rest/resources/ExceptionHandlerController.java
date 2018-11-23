@@ -41,4 +41,11 @@ public class ExceptionHandlerController {
 	public ErrorResponse handleSortParamsException(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
 		return new ErrorResponse(HttpStatus.BAD_REQUEST, this.messageSource.getMessage("resources.sortParamsException", null, locale));
 	}
+
+	@ExceptionHandler(ImmutableDataModificationException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleImmutableDataModificationException(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
+		return new ErrorResponse(HttpStatus.BAD_REQUEST, this.messageSource.getMessage("resources.immutableDataModificationException", null, locale));
+	}
 }

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,5 +52,15 @@ public class LocationsController {
 
 		String creatorLogin = SecurityContextHolder.getContext().getAuthentication().getName();
 		return new ResponseEntity<>(this.locationsUtil.createLocation(location, creatorLogin), HttpStatus.CREATED);
+	}
+
+	@PreAuthorize("hasAuthority('USER')")
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Void> updateLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id,
+			@Valid @RequestBody LocationDetailsData location) {
+
+		String modifierLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+		this.locationsUtil.updateLocation(id, location, modifierLogin);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

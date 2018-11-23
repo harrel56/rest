@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import hibernate.dao.LocationDao;
 import hibernate.dao.UserDao;
 import hibernate.entities.Location;
 import hibernate.entities.User;
+import web.rest.resources.ImmutableDataModificationException;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
 import web.rest.resources.users.UsersUtil;
@@ -54,6 +56,29 @@ public class LocationsUtil {
 		} else {
 			throw new AccessDeniedException("Location creator not found!");
 		}
+	}
+
+	public void updateLocation(Long id, LocationDetailsData locationDetails, String modifierLogin) {
+
+		Location location = this.locationDao.findLocationById(id);
+		if (location == null) {
+			throw new ResourceNotFoundException();
+		}
+
+		User modifier = this.userDao.findByLogin(modifierLogin);
+		if (modifier == null || !location.getCreator().getId().equals(modifier.getId())) {
+			throw new AccessDeniedException("Only location creator can modify it!");
+		}
+
+		if (!location.getLatitude().equals(locationDetails.getLatitude()) || !location.getLongitude().equals(locationDetails.getLongitude())) {
+			throw new ImmutableDataModificationException("Latitude and longitude cannot be modified!");
+		}
+
+		location.setName(locationDetails.getName());
+		location.setDescription(locationDetails.getDescription());
+		location.setState(locationDetails.getState().name());
+
+		this.locationDao.updateLocation(location);
 	}
 
 	public List<LocationData> toDataObjectList(List<Location> locations) {
