@@ -3,6 +3,7 @@ package web.rest.resources.events.model;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
 @SuppressWarnings("serial")
@@ -49,6 +50,16 @@ public class EventDetailsData implements Serializable {
 
 	public State getState() {
 		return this.state;
+	}
+
+	@AssertTrue
+	public boolean validateStartTime() {
+		return this.startTime.after(new Timestamp(System.currentTimeMillis()));
+	}
+
+	@AssertTrue
+	public boolean validateEndTime() {
+		return this.endTime == null || (this.endTime.after(new Timestamp(System.currentTimeMillis())) && this.endTime.after(this.startTime));
 	}
 
 }
