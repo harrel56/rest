@@ -13,6 +13,8 @@ import hibernate.dao.UserDao;
 import hibernate.entities.Location;
 import hibernate.entities.User;
 import web.rest.resources.ImmutableDataModificationException;
+import web.rest.resources.events.EventsUtil;
+import web.rest.resources.events.model.EventData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
 import web.rest.resources.users.UsersUtil;
@@ -29,6 +31,9 @@ public class LocationsUtil {
 	@Autowired
 	private UsersUtil usersUtil;
 
+	@Autowired
+	private EventsUtil eventsUtil;
+
 	public List<LocationData> getLocations() {
 		return this.toDataObjectList(this.locationDao.getLocations());
 	}
@@ -36,6 +41,16 @@ public class LocationsUtil {
 //	public List<UserData> getUsers(UserSearchParams searchParams, SortParams<User> sortParams) {
 //		return this.toDataObjectList(this.locationDao.getLocations());
 //	}
+
+	public List<EventData> getLocationEvents(Long id) {
+
+		Location location = this.locationDao.findLocationById(id);
+		if (location == null) {
+			throw new ResourceNotFoundException();
+		}
+
+		return this.eventsUtil.toDataObjectList(location.getEvents());
+	}
 
 	public LocationData createLocation(LocationDetailsData locationDetails, String creatorLogin) {
 

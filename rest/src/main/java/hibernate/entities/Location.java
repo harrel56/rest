@@ -3,8 +3,8 @@ package hibernate.entities;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +37,7 @@ public class Location implements Serializable {
 	private Timestamp createTime;
 	private Timestamp modifyTime;
 	private String state;
-	private Set<Event> events = new HashSet<Event>(0);
+	private List<Event> events = new ArrayList<Event>(0);
 
 	public Location() {
 	}
@@ -53,7 +53,7 @@ public class Location implements Serializable {
 	}
 
 	public Location(Long id, User creator, String name, String description, Double latitude, Double longitude, Timestamp createTime,
-			Timestamp modifyTime, String state, Set<Event> events) {
+			Timestamp modifyTime, String state, List<Event> events) {
 		this.id = id;
 		this.creator = creator;
 		this.name = name;
@@ -153,11 +153,11 @@ public class Location implements Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "location")
-	public Set<Event> getEvents() {
+	public List<Event> getEvents() {
 		return this.events;
 	}
 
-	public void setEvents(Set<Event> events) {
+	public void setEvents(List<Event> events) {
 		this.events = events;
 	}
 

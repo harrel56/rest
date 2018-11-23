@@ -35,4 +35,13 @@ public class EventsController {
 //
 //		return new ResponseEntity<>(this.usersUtil.getUserByLogin(login), HttpStatus.OK);
 //	}
+
+//	@PreAuthorize("hasAuthority('USER')")
+//	@RequestMapping(value = { "", "/" }, method = RequestMethod.POST)
+//	public ResponseEntity<EventData> createEvent(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+//			@Valid @RequestBody EventDetailsData event) {
+//
+//		String creatorLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+//		return new ResponseEntity<>(this.locationsUtil.createLocation(location, creatorLogin), HttpStatus.CREATED);
+//	}
 }

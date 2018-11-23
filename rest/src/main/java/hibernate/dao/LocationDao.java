@@ -37,7 +37,7 @@ public class LocationDao {
 		crit.where(builder.equal(root.get("id"), id));
 		List<Location> locations = this.em.createQuery(crit).getResultList();
 
-		if (locations != null) {
+		if (!locations.isEmpty()) {
 			return locations.get(0);
 		} else {
 			return null;

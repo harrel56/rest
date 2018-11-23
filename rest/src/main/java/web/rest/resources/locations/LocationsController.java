@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import web.rest.resources.events.model.EventData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
 
@@ -62,5 +63,11 @@ public class LocationsController {
 		String modifierLogin = SecurityContextHolder.getContext().getAuthentication().getName();
 		this.locationsUtil.updateLocation(id, location, modifierLogin);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	@RequestMapping(value = "/{id}/events", method = RequestMethod.GET)
+	public List<EventData> getEventsByLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
+
+		return this.locationsUtil.getLocationEvents(id);
 	}
 }

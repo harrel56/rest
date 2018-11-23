@@ -60,10 +60,6 @@ public class UserDao {
 		searchParams.applySearchFilters(builder, crit, root);
 		sortParams.applySortParams(builder, crit, root);
 
-//		Root<User> root = crit.from(User.class);
-//		// crit.select(root);
-//		crit.orderBy(builder.asc(root.get("location")));
-
 		return this.em.createQuery(crit).getResultList();
 	}
 
