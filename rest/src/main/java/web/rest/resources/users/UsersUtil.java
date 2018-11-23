@@ -41,19 +41,10 @@ public class UsersUtil {
 		User user = this.userDao.findByLogin(login);
 
 		if (user != null) {
-			if (userDetails.getName() != null) {
-				user.setName(userDetails.getName());
-			}
-			if (userDetails.getSurname() != null) {
-				user.setSurname(userDetails.getSurname());
-			}
-			if (userDetails.getLocation() != null) {
-				user.setLocation(userDetails.getLocation());
-			}
-			if (userDetails.getDateOfBirth() != null) {
-				user.setDateOfBirth(userDetails.getDateOfBirth());
-			}
-
+			user.setName(userDetails.getName());
+			user.setSurname(userDetails.getSurname());
+			user.setLocation(userDetails.getLocation());
+			user.setDateOfBirth(userDetails.getDateOfBirth());
 			this.userDao.updateUser(user);
 		} else {
 			throw new ResourceNotFoundException();
