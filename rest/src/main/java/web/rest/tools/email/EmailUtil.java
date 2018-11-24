@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailUtils {
+public class EmailUtil {
 
 	@Autowired
 	private MessageSource messageSource;
@@ -58,7 +58,7 @@ public class EmailUtils {
 		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(EmailUtils.this.login, EmailUtils.this.password);
+				return new PasswordAuthentication(EmailUtil.this.login, EmailUtil.this.password);
 			}
 		});
 

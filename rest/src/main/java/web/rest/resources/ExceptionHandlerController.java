@@ -2,6 +2,8 @@ package web.rest.resources;
 
 import java.util.Locale;
 
+import javax.validation.ValidationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -47,5 +49,13 @@ public class ExceptionHandlerController {
 	@ResponseBody
 	public ErrorResponse handleImmutableDataModificationException(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
 		return new ErrorResponse(HttpStatus.BAD_REQUEST, this.messageSource.getMessage("resources.immutableDataModificationException", null, locale));
+	}
+
+	@ExceptionHandler(ValidationException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleValidationException(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			ValidationException e) {
+		return new ErrorResponse(HttpStatus.BAD_REQUEST, this.messageSource.getMessage(e.getMessage(), null, "Object validation failed", locale));
 	}
 }

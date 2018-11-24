@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import hibernate.dao.UserDao;
 import hibernate.entities.User;
-import web.rest.tools.email.EmailUtils;
+import web.rest.tools.email.EmailUtil;
 import web.rest.usermanagement.activation.ResendActivationResponseData;
 import web.rest.usermanagement.activation.UserActivationResponseData;
 import web.rest.usermanagement.passwordchange.PasswordChangeResponseData;
@@ -31,7 +31,7 @@ public class UserManagementUtil {
 	private BCryptPasswordEncoder encoder;
 
 	@Autowired
-	private EmailUtils emailUtils;
+	private EmailUtil emailUtil;
 
 	@Value("${user-management.activation-string-length}")
 	private int activationStringLength;
@@ -72,7 +72,7 @@ public class UserManagementUtil {
 
 		try {
 			User user = this.userDao.findByLogin(login);
-			this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
+			this.emailUtil.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -86,7 +86,7 @@ public class UserManagementUtil {
 				if (user.getActivationString() != null) {
 
 					user.setActivationString(this.generateActivationString());
-					this.emailUtils.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
+					this.emailUtil.sendActivationEmailAsync(user.getEmail(), user.getLogin(), user.getActivationString(), locale);
 					this.userDao.updateUser(user);
 					return ResendActivationResponseData.ResponseState.RESENT;
 				} else {

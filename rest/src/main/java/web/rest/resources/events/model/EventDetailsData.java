@@ -16,15 +16,15 @@ public class EventDetailsData implements Serializable {
 		ACTIVE, DELETED
 	}
 
-	@NotNull
+	@NotNull(message = "validation.eventDetails.name")
 	private final String name;
 	private final String description;
 
-	@NotNull
+	@NotNull(message = "validation.eventDetails.startTime")
 	private final Timestamp startTime;
 	private final Timestamp endTime;
 
-	@NotNull
+	@NotNull(message = "validation.eventDetails.state")
 	private final State state;
 
 	public EventDetailsData(String name, String description, Timestamp startTime, Timestamp endTime, State state) {
@@ -56,13 +56,13 @@ public class EventDetailsData implements Serializable {
 	}
 
 	@JsonIgnore
-	@AssertTrue
+	@AssertTrue(message = "validation.eventDetails.startTime")
 	public boolean isStartTimeValid() {
 		return this.startTime.after(new Date());
 	}
 
 	@JsonIgnore
-	@AssertTrue
+	@AssertTrue(message = "validation.eventDetails.endTime")
 	public boolean isEndTimeValid() {
 		return this.endTime == null || (this.endTime.after(new Date()) && this.endTime.after(this.startTime));
 	}

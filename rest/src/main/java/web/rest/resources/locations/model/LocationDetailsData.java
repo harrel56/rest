@@ -14,17 +14,17 @@ public class LocationDetailsData implements Serializable {
 		ACTIVE, DELETED
 	}
 
-	@NotNull
+	@NotNull(message = "validation.locationDetails.name")
 	private final String name;
 	private final String description;
 
-	@NotNull
+	@NotNull(message = "validation.locationDetails.latitude")
 	private final Double latitude;
 
-	@NotNull
+	@NotNull(message = "validation.locationDetails.longitude")
 	private final Double longitude;
 
-	@NotNull
+	@NotNull(message = "validation.locationDetails.state")
 	private final State state;
 
 	public LocationDetailsData(String name, String description, Double latitude, Double longitude, State state) {
@@ -56,13 +56,13 @@ public class LocationDetailsData implements Serializable {
 	}
 
 	@JsonIgnore
-	@AssertTrue
+	@AssertTrue(message = "validation.locationDetails.latitude")
 	public boolean isLatitudeValid() {
 		return this.latitude >= -90.0 && this.latitude <= 90.0;
 	}
 
 	@JsonIgnore
-	@AssertTrue
+	@AssertTrue(message = "validation.locationDetails.longitude")
 	public boolean isLongitudeValid() {
 		return this.longitude >= -180.0 && this.longitude <= 180.0;
 	}

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
+import web.rest.tools.validation.ValidationUtil;
 
 @RestController
 @RequestMapping("/events")
@@ -48,9 +50,9 @@ public class EventsController {
 	@PreAuthorize("hasAuthority('USER')")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> updateEvent(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id,
-			@Valid @RequestBody EventDetailsData eventDetails) {
+			@Valid @RequestBody EventDetailsData eventDetails, BindingResult validation) {
 
-		// eventDetails.validateStartTime();
+		ValidationUtil.handleValidation(validation);
 
 		String modifierLogin = SecurityContextHolder.getContext().getAuthentication().getName();
 		this.eventsUtil.updateEvent(id, eventDetails, modifierLogin);
