@@ -40,12 +40,11 @@ public class EventsController {
 		return this.eventsUtil.getEvents();
 	}
 
-//	@RequestMapping(value = "/{login}", method = RequestMethod.GET)
-//	public ResponseEntity<UserData> getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-//			@PathVariable String login) {
-//
-//		return new ResponseEntity<>(this.usersUtil.getUserByLogin(login), HttpStatus.OK);
-//	}
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public EventData getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
+
+		return this.eventsUtil.getEvent(id);
+	}
 
 	@PreAuthorize("hasAuthority('USER')")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)

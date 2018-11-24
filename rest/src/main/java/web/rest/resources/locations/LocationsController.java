@@ -42,12 +42,11 @@ public class LocationsController {
 		return this.locationsUtil.getLocations();
 	}
 
-//	@RequestMapping(value = "/{login}", method = RequestMethod.GET)
-//	public ResponseEntity<UserData> getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-//			@PathVariable String login) {
-//
-//		return new ResponseEntity<>(this.usersUtil.getUserByLogin(login), HttpStatus.OK);
-//	}
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public LocationData getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
+
+		return this.locationsUtil.getLocation(id);
+	}
 
 	@PreAuthorize("hasAuthority('USER')")
 	@RequestMapping(value = { "", "/" }, method = RequestMethod.POST)

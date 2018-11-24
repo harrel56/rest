@@ -45,10 +45,9 @@ public class UsersController {
 	}
 
 	@RequestMapping(value = "/{login}", method = RequestMethod.GET)
-	public ResponseEntity<UserData> getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@PathVariable String login) {
+	public UserData getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable String login) {
 
-		return new ResponseEntity<>(this.usersUtil.getUserByLogin(login), HttpStatus.OK);
+		return this.usersUtil.getUserByLogin(login);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")

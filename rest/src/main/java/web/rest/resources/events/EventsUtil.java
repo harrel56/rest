@@ -41,6 +41,10 @@ public class EventsUtil {
 //		return this.toDataObjectList(this.locationDao.getLocations());
 //	}
 
+	public EventData getEvent(Long id) {
+		return this.toDataObject(this.eventDao.findEventById(id));
+	}
+
 	public EventData createEvent(Location location, EventDetailsData eventDetails, String creatorLogin) {
 
 		User creator = this.userDao.findByLogin(creatorLogin);

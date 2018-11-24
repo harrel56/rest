@@ -43,6 +43,10 @@ public class LocationsUtil {
 //		return this.toDataObjectList(this.locationDao.getLocations());
 //	}
 
+	public LocationData getLocation(Long id) {
+		return this.toDataObject(this.locationDao.findLocationById(id));
+	}
+
 	public List<EventData> getLocationEvents(Long id) {
 
 		Location location = this.locationDao.findLocationById(id);
