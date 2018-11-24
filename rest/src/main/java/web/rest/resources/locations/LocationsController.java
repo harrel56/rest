@@ -44,10 +44,11 @@ public class LocationsController {
 	public List<LocationData> getLocations(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestParam(name = "name", required = false) String name, @RequestParam(name = "description", required = false) String description,
 			@RequestParam(name = "state", required = false) String state, @RequestParam(name = "latitude", required = false) Double latitude,
-			@RequestParam(name = "longitude", required = false) Double longitude, @RequestParam(name = "radius", required = false) Double radius) {
+			@RequestParam(name = "longitude", required = false) Double longitude, @RequestParam(name = "radius", required = false) Double radius,
+			@RequestParam(name = "sort", required = false) String[] sorts) {
 
 		return this.locationsUtil.getLocations(new LocationSearchParams(name, description, state, latitude, longitude, radius),
-				new SortParams<Location>(Location.class, null));
+				new SortParams<Location>(Location.class, sorts));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
