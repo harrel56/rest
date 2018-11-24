@@ -2,14 +2,18 @@ package web.rest.resources.locations;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import hibernate.dao.EventDao;
 import hibernate.dao.LocationDao;
 import hibernate.dao.UserDao;
+import hibernate.entities.Event;
 import hibernate.entities.Location;
 import hibernate.entities.User;
 import web.rest.resources.ImmutableDataModificationException;
@@ -25,6 +29,9 @@ public class LocationsUtil {
 
 	@Autowired
 	private LocationDao locationDao;
+
+	@Autowired
+	private EventDao eventDao;
 
 	@Autowired
 	private UserDao userDao;
@@ -78,6 +85,7 @@ public class LocationsUtil {
 		}
 	}
 
+	@Transactional
 	public void updateLocation(Long id, LocationDetailsData locationDetails, String modifierLogin) {
 
 		Location location = this.locationDao.findLocationById(id);
@@ -85,13 +93,39 @@ public class LocationsUtil {
 			throw new ResourceNotFoundException();
 		}
 
-		User modifier = this.userDao.findByLogin(modifierLogin);
+		final User modifier = this.userDao.findByLogin(modifierLogin);
 		if (modifier == null || !location.getCreator().getId().equals(modifier.getId())) {
 			throw new AccessDeniedException("Only location creator can modify it!");
 		}
 
+		if (LocationDetailsData.State.valueOf(location.getState()) == LocationDetailsData.State.DELETED) {
+			throw new UnsupportedOperationException();
+		}
+
 		if (!location.getLatitude().equals(locationDetails.getLatitude()) || !location.getLongitude().equals(locationDetails.getLongitude())) {
 			throw new ImmutableDataModificationException("Latitude and longitude cannot be modified!");
+		}
+
+		if (locationDetails.getState() == LocationDetailsData.State.DELETED) {
+			/* Check if there are non modifier events attached to this location */
+			List<Event> events = location.getEvents();
+			boolean usedBySomeone = events.stream().anyMatch(new Predicate<Event>() {
+
+				@Override
+				public boolean test(Event event) {
+					return !event.getCreator().getId().equals(modifier.getId());
+				}
+			});
+
+			if (usedBySomeone) {
+				throw new UnsupportedOperationException();
+			}
+
+			/* If location is deleted, also mark all attached events as deleted */
+			for (Event event : events) {
+				event.setState(LocationDetailsData.State.DELETED.name());
+				this.eventDao.updateEvent(event);
+			}
 		}
 
 		location.setName(locationDetails.getName());

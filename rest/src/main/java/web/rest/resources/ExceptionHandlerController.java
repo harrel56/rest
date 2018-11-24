@@ -58,4 +58,11 @@ public class ExceptionHandlerController {
 			ValidationException e) {
 		return new ErrorResponse(HttpStatus.BAD_REQUEST, this.messageSource.getMessage(e.getMessage(), null, "Object validation failed", locale));
 	}
+
+	@ExceptionHandler(UnsupportedOperationException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleUnsupportedOperationException(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
+		return new ErrorResponse(HttpStatus.BAD_REQUEST, this.messageSource.getMessage("resources.unsupportedOperation", null, locale));
+	}
 }
