@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hibernate.entities.User;
 import hibernate.search.UserSearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.events.model.EventData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.users.model.UserData;
 import web.rest.resources.users.model.UserDetailsData;
@@ -69,5 +70,11 @@ public class UsersController {
 			@PathVariable String login) {
 
 		return this.usersUtil.getUserLocations(login);
+	}
+
+	@RequestMapping(value = "/{login}/events", method = RequestMethod.GET)
+	public List<EventData> getUserEvents(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable String login) {
+
+		return this.usersUtil.getUserEvents(login);
 	}
 }
