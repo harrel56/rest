@@ -1,5 +1,6 @@
 package web.rest.resources.events;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,8 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hibernate.entities.Event;
+import hibernate.search.EventSearchParams;
+import hibernate.sort.SortParams;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.tools.validation.ValidationUtil;
@@ -35,9 +40,15 @@ public class EventsController {
 	EventsUtil eventsUtil;
 
 	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
-	public List<EventData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
+	public List<EventData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@RequestParam(name = "name", required = false) String name, @RequestParam(name = "description", required = false) String description,
+			@RequestParam(name = "state", required = false) String state, @RequestParam(name = "startTimeGt", required = false) Timestamp startTimeGt,
+			@RequestParam(name = "startTimeLt", required = false) Timestamp startTimeLt,
+			@RequestParam(name = "endTimeGt", required = false) Timestamp endTimeGt,
+			@RequestParam(name = "endTimeLt", required = false) Timestamp endTimeLt, @RequestParam(name = "sort", required = false) String[] sorts) {
 
-		return this.eventsUtil.getEvents();
+		return this.eventsUtil.getEvents(new EventSearchParams(name, description, state, startTimeGt, startTimeLt, endTimeGt, endTimeLt),
+				new SortParams<Event>(Event.class, sorts));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

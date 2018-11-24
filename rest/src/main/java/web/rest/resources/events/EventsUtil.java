@@ -13,6 +13,8 @@ import hibernate.dao.UserDao;
 import hibernate.entities.Event;
 import hibernate.entities.Location;
 import hibernate.entities.User;
+import hibernate.search.SearchParams;
+import hibernate.sort.SortParams;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.LocationsUtil;
@@ -37,9 +39,9 @@ public class EventsUtil {
 		return this.toDataObjectList(this.eventDao.getEvents());
 	}
 
-//	public List<UserData> getUsers(UserSearchParams searchParams, SortParams<User> sortParams) {
-//		return this.toDataObjectList(this.locationDao.getLocations());
-//	}
+	public List<EventData> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams) {
+		return this.toDataObjectList(this.eventDao.getEvents(searchParams, sortParams));
+	}
 
 	public EventData getEvent(Long id) {
 		return this.toDataObject(this.eventDao.findEventById(id));

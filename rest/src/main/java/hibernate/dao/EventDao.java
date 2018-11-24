@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import hibernate.entities.Event;
+import hibernate.search.EventSearchParams;
+import hibernate.search.SearchParams;
+import hibernate.sort.SortParams;
 
 @Repository
 public class EventDao {
@@ -53,26 +56,26 @@ public class EventDao {
 		return this.em.createQuery(crit).getResultList();
 	}
 
-//	@Transactional(readOnly = true)
-//	public List<User> getUsers(SearchParams<User> searchParams) {
-//		return this.getUsers(searchParams, SortParams.empty());
-//	}
-//
-//	@Transactional(readOnly = true)
-//	public List<User> getUsers(SortParams<User> sortParams) {
-//		return this.getUsers(UserSearchParams.empty(), sortParams);
-//	}
-//
-//	@Transactional(readOnly = true)
-//	public List<User> getUsers(SearchParams<User> searchParams, SortParams<User> sortParams) {
-//		CriteriaBuilder builder = this.em.getCriteriaBuilder();
-//		CriteriaQuery<User> crit = builder.createQuery(User.class);
-//		Root<User> root = crit.from(User.class);
-//
-//		searchParams.applySearchFilters(builder, crit, root);
-//		sortParams.applySortParams(builder, crit, root);
-//
-//		return this.em.createQuery(crit).getResultList();
-//	}
+	@Transactional(readOnly = true)
+	public List<Event> getEvents(SearchParams<Event> searchParams) {
+		return this.getEvents(searchParams, SortParams.empty());
+	}
+
+	@Transactional(readOnly = true)
+	public List<Event> getEvents(SortParams<Event> sortParams) {
+		return this.getEvents(EventSearchParams.empty(), sortParams);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Event> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams) {
+		CriteriaBuilder builder = this.em.getCriteriaBuilder();
+		CriteriaQuery<Event> crit = builder.createQuery(Event.class);
+		Root<Event> root = crit.from(Event.class);
+
+		searchParams.applySearchFilters(builder, crit, root);
+		sortParams.applySortParams(builder, crit, root);
+
+		return this.em.createQuery(crit).getResultList();
+	}
 
 }
