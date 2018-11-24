@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hibernate.entities.User;
 import hibernate.search.UserSearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.users.model.UserData;
 import web.rest.resources.users.model.UserDetailsData;
 
@@ -61,5 +62,12 @@ public class UsersController {
 			throw new AccessDeniedException("Invalid token for request operation!");
 		}
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	@RequestMapping(value = "/{login}/locations", method = RequestMethod.GET)
+	public List<LocationData> getUserLocations(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@PathVariable String login) {
+
+		return this.usersUtil.getUserLocations(login);
 	}
 }

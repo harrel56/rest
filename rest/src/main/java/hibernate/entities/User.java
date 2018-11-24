@@ -4,12 +4,16 @@ package hibernate.entities;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -39,6 +43,9 @@ public class User implements Serializable {
 	private String surname;
 	private String location;
 	private Date dateOfBirth;
+
+	private List<Location> locations = new ArrayList<>(0);
+	private List<Event> events = new ArrayList<>(0);
 
 	public User() {
 	}
@@ -178,6 +185,24 @@ public class User implements Serializable {
 
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
+	public List<Location> getLocations() {
+		return this.locations;
+	}
+
+	public void setLocations(List<Location> locations) {
+		this.locations = locations;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "creator")
+	public List<Event> getEvents() {
+		return this.events;
+	}
+
+	public void setEvents(List<Event> events) {
+		this.events = events;
 	}
 
 }

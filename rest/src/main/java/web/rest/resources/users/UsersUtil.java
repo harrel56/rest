@@ -11,6 +11,8 @@ import hibernate.dao.UserDao;
 import hibernate.entities.User;
 import hibernate.search.UserSearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.locations.LocationsUtil;
+import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.users.model.UserData;
 import web.rest.resources.users.model.UserDetailsData;
 
@@ -19,6 +21,9 @@ public class UsersUtil {
 
 	@Autowired
 	private UserDao userDao;
+
+	@Autowired
+	private LocationsUtil locationsUtil;
 
 	public List<UserData> getUsers() {
 		return this.toDataObjectList(this.userDao.getUsers());
@@ -49,6 +54,16 @@ public class UsersUtil {
 		} else {
 			throw new ResourceNotFoundException();
 		}
+	}
+
+	public List<LocationData> getUserLocations(String login) {
+
+		User user = this.userDao.findByLogin(login);
+		if (user == null) {
+			throw new ResourceNotFoundException();
+		}
+
+		return this.locationsUtil.toDataObjectList(user.getLocations());
 	}
 
 	public List<UserData> toDataObjectList(List<User> users) {
