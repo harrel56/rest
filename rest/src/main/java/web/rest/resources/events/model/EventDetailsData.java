@@ -2,9 +2,12 @@ package web.rest.resources.events.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @SuppressWarnings("serial")
 public class EventDetailsData implements Serializable {
@@ -52,14 +55,16 @@ public class EventDetailsData implements Serializable {
 		return this.state;
 	}
 
+	@JsonIgnore
 	@AssertTrue
-	public boolean validateStartTime() {
-		return this.startTime.after(new Timestamp(System.currentTimeMillis()));
+	public boolean isStartTimeValid() {
+		return this.startTime.after(new Date());
 	}
 
+	@JsonIgnore
 	@AssertTrue
-	public boolean validateEndTime() {
-		return this.endTime == null || (this.endTime.after(new Timestamp(System.currentTimeMillis())) && this.endTime.after(this.startTime));
+	public boolean isEndTimeValid() {
+		return this.endTime == null || (this.endTime.after(new Date()) && this.endTime.after(this.startTime));
 	}
 
 }

@@ -50,6 +50,8 @@ public class EventsController {
 	public ResponseEntity<Void> updateEvent(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id,
 			@Valid @RequestBody EventDetailsData eventDetails) {
 
+		// eventDetails.validateStartTime();
+
 		String modifierLogin = SecurityContextHolder.getContext().getAuthentication().getName();
 		this.eventsUtil.updateEvent(id, eventDetails, modifierLogin);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);

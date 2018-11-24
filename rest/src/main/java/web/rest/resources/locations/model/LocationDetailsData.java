@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @SuppressWarnings("serial")
 public class LocationDetailsData implements Serializable {
 
@@ -53,13 +55,15 @@ public class LocationDetailsData implements Serializable {
 		return this.state;
 	}
 
+	@JsonIgnore
 	@AssertTrue
-	public boolean validateLatitude() {
+	public boolean isLatitudeValid() {
 		return this.latitude >= -90.0 && this.latitude <= 90.0;
 	}
 
+	@JsonIgnore
 	@AssertTrue
-	public boolean validateLongitude() {
+	public boolean isLongitudeValid() {
 		return this.longitude >= -180.0 && this.longitude <= 180.0;
 	}
 

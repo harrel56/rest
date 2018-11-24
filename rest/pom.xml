@@ -55,11 +55,6 @@
     		<artifactId>spring-data-rest-webmvc</artifactId>
 		</dependency>
         <dependency>
-            <groupId>com.jayway.jsonpath</groupId>
-            <artifactId>json-path</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
      		<groupId>org.xerial</groupId>
       		<artifactId>sqlite-jdbc</artifactId>
       	</dependency>
@@ -89,6 +84,10 @@
     		<artifactId>commons-lang</artifactId>
    			<version>2.6</version>
 		</dependency>
+		<dependency>
+        	<groupId>com.fasterxml.jackson.core</groupId>
+        	<artifactId>jackson-databind</artifactId>
+    	</dependency>
     </dependencies>
 
     <properties>
