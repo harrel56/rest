@@ -16,6 +16,8 @@ import hibernate.dao.UserDao;
 import hibernate.entities.Event;
 import hibernate.entities.Location;
 import hibernate.entities.User;
+import hibernate.search.SearchParams;
+import hibernate.sort.SortParams;
 import web.rest.resources.ImmutableDataModificationException;
 import web.rest.resources.events.EventsUtil;
 import web.rest.resources.events.model.EventData;
@@ -46,9 +48,9 @@ public class LocationsUtil {
 		return this.toDataObjectList(this.locationDao.getLocations());
 	}
 
-//	public List<UserData> getUsers(UserSearchParams searchParams, SortParams<User> sortParams) {
-//		return this.toDataObjectList(this.locationDao.getLocations());
-//	}
+	public List<LocationData> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams) {
+		return this.toDataObjectList(this.locationDao.getLocations(searchParams, sortParams));
+	}
 
 	public LocationData getLocation(Long id) {
 		return this.toDataObject(this.locationDao.findLocationById(id));
@@ -107,7 +109,8 @@ public class LocationsUtil {
 		}
 
 		if (locationDetails.getState() == LocationDetailsData.State.DELETED) {
-			/* Check if there are non modifier events attached to this location */
+
+			/* Check if there are any non modifier events attached to this location */
 			List<Event> events = location.getEvents();
 			boolean usedBySomeone = events.stream().anyMatch(new Predicate<Event>() {
 

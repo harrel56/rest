@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import hibernate.entities.Location;
+import hibernate.search.LocationSearchParams;
+import hibernate.search.SearchParams;
+import hibernate.sort.SortParams;
 
 @Repository
 public class LocationDao {
@@ -53,26 +56,26 @@ public class LocationDao {
 		return this.em.createQuery(crit).getResultList();
 	}
 
-//	@Transactional(readOnly = true)
-//	public List<User> getUsers(SearchParams<User> searchParams) {
-//		return this.getUsers(searchParams, SortParams.empty());
-//	}
-//
-//	@Transactional(readOnly = true)
-//	public List<User> getUsers(SortParams<User> sortParams) {
-//		return this.getUsers(UserSearchParams.empty(), sortParams);
-//	}
-//
-//	@Transactional(readOnly = true)
-//	public List<User> getUsers(SearchParams<User> searchParams, SortParams<User> sortParams) {
-//		CriteriaBuilder builder = this.em.getCriteriaBuilder();
-//		CriteriaQuery<User> crit = builder.createQuery(User.class);
-//		Root<User> root = crit.from(User.class);
-//
-//		searchParams.applySearchFilters(builder, crit, root);
-//		sortParams.applySortParams(builder, crit, root);
-//
-//		return this.em.createQuery(crit).getResultList();
-//	}
+	@Transactional(readOnly = true)
+	public List<Location> getLocations(SearchParams<Location> searchParams) {
+		return this.getLocations(searchParams, SortParams.empty());
+	}
+
+	@Transactional(readOnly = true)
+	public List<Location> getLocations(SortParams<Location> sortParams) {
+		return this.getLocations(LocationSearchParams.empty(), sortParams);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Location> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams) {
+		CriteriaBuilder builder = this.em.getCriteriaBuilder();
+		CriteriaQuery<Location> crit = builder.createQuery(Location.class);
+		Root<Location> root = crit.from(Location.class);
+
+		searchParams.applySearchFilters(builder, crit, root);
+		sortParams.applySortParams(builder, crit, root);
+
+		return this.em.createQuery(crit).getResultList();
+	}
 
 }

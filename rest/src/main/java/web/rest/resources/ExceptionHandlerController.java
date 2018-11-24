@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import hibernate.search.SearchParamsException;
 import hibernate.sort.SortParamsException;
 
 @ControllerAdvice
@@ -35,6 +36,13 @@ public class ExceptionHandlerController {
 	@ResponseBody
 	public ErrorResponse handleAccessDenied(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
 		return new ErrorResponse(HttpStatus.FORBIDDEN, this.messageSource.getMessage("resources.accessDenied", null, locale));
+	}
+
+	@ExceptionHandler(SearchParamsException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleSearchParamsException(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
+		return new ErrorResponse(HttpStatus.BAD_REQUEST, this.messageSource.getMessage("resources.searchParamsException", null, locale));
 	}
 
 	@ExceptionHandler(SortParamsException.class)

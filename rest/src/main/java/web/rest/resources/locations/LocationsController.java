@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import hibernate.entities.Location;
+import hibernate.search.LocationSearchParams;
+import hibernate.sort.SortParams;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.model.LocationData;
@@ -37,13 +41,17 @@ public class LocationsController {
 	LocationsUtil locationsUtil;
 
 	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
-	public List<LocationData> getLocations(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
+	public List<LocationData> getLocations(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@RequestParam(name = "name", required = false) String name, @RequestParam(name = "description", required = false) String description,
+			@RequestParam(name = "state", required = false) String state, @RequestParam(name = "latitude", required = false) Double latitude,
+			@RequestParam(name = "longitude", required = false) Double longitude, @RequestParam(name = "radius", required = false) Double radius) {
 
-		return this.locationsUtil.getLocations();
+		return this.locationsUtil.getLocations(new LocationSearchParams(name, description, state, latitude, longitude, radius),
+				new SortParams<Location>(Location.class, null));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public LocationData getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
+	public LocationData getLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
 
 		return this.locationsUtil.getLocation(id);
 	}
