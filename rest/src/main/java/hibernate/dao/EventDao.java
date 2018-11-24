@@ -30,6 +30,21 @@ public class EventDao {
 	}
 
 	@Transactional(readOnly = true)
+	public Event findEventById(Long id) {
+		CriteriaBuilder builder = this.em.getCriteriaBuilder();
+		CriteriaQuery<Event> crit = builder.createQuery(Event.class);
+		Root<Event> root = crit.from(Event.class);
+		crit.where(builder.equal(root.get("id"), id));
+		List<Event> events = this.em.createQuery(crit).getResultList();
+
+		if (!events.isEmpty()) {
+			return events.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@Transactional(readOnly = true)
 	public List<Event> getEvents() {
 		CriteriaBuilder builder = this.em.getCriteriaBuilder();
 		CriteriaQuery<Event> crit = builder.createQuery(Event.class);

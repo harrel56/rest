@@ -3,15 +3,24 @@ package web.rest.resources.events;
 import java.util.List;
 import java.util.Locale;
 
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import web.rest.resources.events.model.EventData;
+import web.rest.resources.events.model.EventDetailsData;
 
 @RestController
 @RequestMapping("/events")
@@ -36,12 +45,14 @@ public class EventsController {
 //		return new ResponseEntity<>(this.usersUtil.getUserByLogin(login), HttpStatus.OK);
 //	}
 
-//	@PreAuthorize("hasAuthority('USER')")
-//	@RequestMapping(value = { "", "/" }, method = RequestMethod.POST)
-//	public ResponseEntity<EventData> createEvent(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-//			@Valid @RequestBody EventDetailsData event) {
-//
-//		String creatorLogin = SecurityContextHolder.getContext().getAuthentication().getName();
-//		return new ResponseEntity<>(this.locationsUtil.createLocation(location, creatorLogin), HttpStatus.CREATED);
-//	}
+	@PreAuthorize("hasAuthority('USER')")
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Void> updateEvent(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id,
+			@Valid @RequestBody EventDetailsData eventDetails) {
+
+		String modifierLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+		this.eventsUtil.updateEvent(id, eventDetails, modifierLogin);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
 }

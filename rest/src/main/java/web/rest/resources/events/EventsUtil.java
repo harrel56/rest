@@ -64,6 +64,26 @@ public class EventsUtil {
 		return this.toDataObject(event);
 	}
 
+	public void updateEvent(Long id, EventDetailsData eventDetails, String modifierLogin) {
+
+		Event event = this.eventDao.findEventById(id);
+		if (event == null) {
+			throw new ResourceNotFoundException();
+		}
+
+		User modifier = this.userDao.findByLogin(modifierLogin);
+		if (modifier == null || !event.getCreator().getId().equals(modifier.getId())) {
+			throw new AccessDeniedException("");
+		}
+
+		event.setName(eventDetails.getName());
+		event.setDescription(eventDetails.getDescription());
+		event.setStartTime(eventDetails.getStartTime());
+		event.setEndTime(eventDetails.getEndTime());
+		event.setState(eventDetails.getState().name());
+		this.eventDao.updateEvent(event);
+	}
+
 	public List<EventData> toDataObjectList(List<Event> events) {
 		List<EventData> locationDatas = new ArrayList<>(events.size());
 		for (Event event : events) {
