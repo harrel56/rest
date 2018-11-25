@@ -46,6 +46,7 @@ public class User implements Serializable {
 
 	private List<Location> locations = new ArrayList<>(0);
 	private List<Event> events = new ArrayList<>(0);
+	private List<Attendance> attendances = new ArrayList<>(0);
 
 	public User() {
 	}
@@ -205,4 +206,12 @@ public class User implements Serializable {
 		this.events = events;
 	}
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+	public List<Attendance> getAttendances() {
+		return this.attendances;
+	}
+
+	public void setAttendances(List<Attendance> attendances) {
+		this.attendances = attendances;
+	}
 }

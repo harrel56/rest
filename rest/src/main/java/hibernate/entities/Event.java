@@ -3,6 +3,8 @@ package hibernate.entities;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,6 +38,8 @@ public class Event implements Serializable {
 	private Timestamp createTime;
 	private Timestamp modifyTime;
 	private String state;
+
+	private List<Attendance> attendances = new ArrayList<>(0);
 
 	public Event() {
 	}
@@ -157,6 +162,15 @@ public class Event implements Serializable {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "event")
+	public List<Attendance> getAttendances() {
+		return this.attendances;
+	}
+
+	public void setAttendances(List<Attendance> attendances) {
+		this.attendances = attendances;
 	}
 
 }
