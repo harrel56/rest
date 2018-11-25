@@ -35,6 +35,12 @@ public class EmailUtil {
 	@Value("${mail.password}")
 	private String password;
 
+	@Value("${mail.smtp.auth}")
+	private String auth;
+
+	@Value("${mail.smtp.starttls.enable}")
+	private String starttls;
+
 	@Async
 	public void sendActivationEmailAsync(String recipient, String login, String activationString, Locale locale) throws MessagingException {
 
@@ -51,9 +57,9 @@ public class EmailUtil {
 		Properties props = new Properties();
 		props.put("mail.smtp.user", this.login);
 		props.put("mail.smtp.host", this.smtpHost);
-		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.auth", this.auth);
 		props.put("mail.smtp.port", this.smtpPort);
-		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.starttls.enable", this.starttls);
 
 		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
 			@Override
