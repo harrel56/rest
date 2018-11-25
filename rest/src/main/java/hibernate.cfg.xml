@@ -4,7 +4,8 @@
     <session-factory>
         <property name="hibernate.bytecode.use_reflection_optimizer">false</property>
         <property name="hibernate.connection.driver_class">org.sqlite.JDBC</property>
-        <property name="hibernate.connection.url">jdbc:sqlite:C:\Users\Harrel\Desktop\git-rest\rest\target\data.sqlite</property>
+        <!-- <property name="hibernate.connection.url">jdbc:sqlite:C:\Users\Harrel\Desktop\git-rest\rest\target\data.sqlite</property> -->
+        <property name="hibernate.connection.url">${jdbc.connection-string}</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.dialect">org.hibernate.dialect.SQLiteDialect</property>
         <property name="hibernate.search.autoregister_listeners">true</property>
