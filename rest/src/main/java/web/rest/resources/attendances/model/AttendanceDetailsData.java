@@ -4,24 +4,22 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
+import hibernate.enums.AttendanceType;
+
 @SuppressWarnings("serial")
 public class AttendanceDetailsData implements Serializable {
 
-	public static enum Type {
-		GOING, INTERESTED, FOLLOWING
-	}
-
 	@NotNull(message = "validation.attendanceDetails.type")
-	private Type type;
+	private AttendanceType type;
 
 	public AttendanceDetailsData() {
 	}
 
-	public AttendanceDetailsData(Type type) {
+	public AttendanceDetailsData(AttendanceType type) {
 		this.type = type;
 	}
 
-	public Type getType() {
+	public AttendanceType getType() {
 		return this.type;
 	}
 

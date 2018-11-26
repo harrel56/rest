@@ -71,7 +71,7 @@ public class EventsUtil {
 		event.setDescription(eventDetails.getDescription());
 		event.setStartTime(eventDetails.getStartTime());
 		event.setEndTime(eventDetails.getEndTime());
-		event.setState(eventDetails.getState().name());
+		event.setState(eventDetails.getState());
 
 		this.eventDao.addEvent(event);
 		return this.toDataObject(event);
@@ -93,7 +93,7 @@ public class EventsUtil {
 		event.setDescription(eventDetails.getDescription());
 		event.setStartTime(eventDetails.getStartTime());
 		event.setEndTime(eventDetails.getEndTime());
-		event.setState(eventDetails.getState().name());
+		event.setState(eventDetails.getState());
 		this.eventDao.updateEvent(event);
 	}
 
@@ -112,7 +112,7 @@ public class EventsUtil {
 		Attendance attendance = new Attendance();
 		attendance.setEvent(event);
 		attendance.setUser(user);
-		attendance.setType(attendanceDetails.getType().name());
+		attendance.setType(attendanceDetails.getType());
 		this.attendanceDao.addAttendance(attendance);
 
 		return this.toDataObject(attendance);
@@ -128,8 +128,7 @@ public class EventsUtil {
 
 	public EventData toDataObject(Event event) {
 		return new EventData(event.getId(), this.locationsUtil.toDataObject(event.getLocation()), this.usersUtil.toDataObject(event.getCreator()),
-				new EventDetailsData(event.getName(), event.getDescription(), event.getStartTime(), event.getEndTime(),
-						EventDetailsData.State.valueOf(event.getState())),
+				new EventDetailsData(event.getName(), event.getDescription(), event.getStartTime(), event.getEndTime(), event.getState()),
 				event.getCreateTime(), event.getModifyTime());
 	}
 
@@ -143,6 +142,6 @@ public class EventsUtil {
 
 	public AttendanceData toDataObject(Attendance att) {
 		return new AttendanceData(att.getId(), this.usersUtil.toDataObject(att.getUser()), this.toDataObject(att.getEvent()),
-				new AttendanceDetailsData(AttendanceDetailsData.Type.valueOf(att.getType())), att.getCreateTime(), att.getModifyTime());
+				new AttendanceDetailsData(att.getType()), att.getCreateTime(), att.getModifyTime());
 	}
 }

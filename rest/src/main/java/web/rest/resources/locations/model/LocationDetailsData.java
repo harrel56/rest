@@ -7,12 +7,10 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import hibernate.enums.State;
+
 @SuppressWarnings("serial")
 public class LocationDetailsData implements Serializable {
-
-	public static enum State {
-		ACTIVE, DELETED
-	}
 
 	@NotNull(message = "validation.locationDetails.name")
 	private final String name;

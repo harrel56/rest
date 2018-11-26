@@ -16,6 +16,7 @@ import hibernate.dao.UserDao;
 import hibernate.entities.Event;
 import hibernate.entities.Location;
 import hibernate.entities.User;
+import hibernate.enums.State;
 import hibernate.search.SearchParams;
 import hibernate.sort.SortParams;
 import web.rest.resources.ImmutableDataModificationException;
@@ -78,7 +79,7 @@ public class LocationsUtil {
 			location.setDescription(locationDetails.getDescription());
 			location.setLatitude(locationDetails.getLatitude());
 			location.setLongitude(locationDetails.getLongitude());
-			location.setState(locationDetails.getState().name());
+			location.setState(locationDetails.getState());
 
 			this.locationDao.addLocation(location);
 			return this.toDataObject(location);
@@ -100,7 +101,7 @@ public class LocationsUtil {
 			throw new AccessDeniedException("Only location creator can modify it!");
 		}
 
-		if (LocationDetailsData.State.valueOf(location.getState()) == LocationDetailsData.State.DELETED) {
+		if (location.getState() == State.DELETED) {
 			throw new UnsupportedOperationException();
 		}
 
@@ -108,7 +109,7 @@ public class LocationsUtil {
 			throw new ImmutableDataModificationException("Latitude and longitude cannot be modified!");
 		}
 
-		if (locationDetails.getState() == LocationDetailsData.State.DELETED) {
+		if (locationDetails.getState() == State.DELETED) {
 
 			/* Check if there are any non modifier events attached to this location */
 			List<Event> events = location.getEvents();
@@ -126,14 +127,14 @@ public class LocationsUtil {
 
 			/* If location is deleted, also mark all attached events as deleted */
 			for (Event event : events) {
-				event.setState(LocationDetailsData.State.DELETED.name());
+				event.setState(State.DELETED);
 				this.eventDao.updateEvent(event);
 			}
 		}
 
 		location.setName(locationDetails.getName());
 		location.setDescription(locationDetails.getDescription());
-		location.setState(locationDetails.getState().name());
+		location.setState(locationDetails.getState());
 
 		this.locationDao.updateLocation(location);
 	}
@@ -152,8 +153,9 @@ public class LocationsUtil {
 	}
 
 	public LocationData toDataObject(Location location) {
-		return new LocationData(location.getId(), this.usersUtil.toDataObject(location.getCreator()), new LocationDetailsData(location.getName(),
-				location.getDescription(), location.getLatitude(), location.getLongitude(), LocationDetailsData.State.valueOf(location.getState())),
+		return new LocationData(
+				location.getId(), this.usersUtil.toDataObject(location.getCreator()), new LocationDetailsData(location.getName(),
+						location.getDescription(), location.getLatitude(), location.getLongitude(), location.getState()),
 				location.getCreateTime(), location.getModifyTime());
 	}
 }

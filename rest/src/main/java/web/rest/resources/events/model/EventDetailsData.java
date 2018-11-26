@@ -9,12 +9,10 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import hibernate.enums.State;
+
 @SuppressWarnings("serial")
 public class EventDetailsData implements Serializable {
-
-	public static enum State {
-		ACTIVE, DELETED
-	}
 
 	@NotNull(message = "validation.eventDetails.name")
 	private final String name;

@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +18,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import hibernate.enums.AttendanceType;
+
 @SuppressWarnings("serial")
 @Entity
 @Table(name = "ATTENDANCE")
@@ -24,7 +28,7 @@ public class Attendance implements Serializable {
 	private Long id;
 	private User user;
 	private Event event;
-	private String type;
+	private AttendanceType type;
 	private Timestamp createTime;
 	private Timestamp modifyTime;
 
@@ -62,12 +66,13 @@ public class Attendance implements Serializable {
 		this.event = event;
 	}
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "TYPE", nullable = false, length = 2000000000)
-	public String getType() {
+	public AttendanceType getType() {
 		return this.type;
 	}
 
-	public void setType(String type) {
+	public void setType(AttendanceType type) {
 		this.type = type;
 	}
 
