@@ -72,6 +72,13 @@ public class EventsController {
 	}
 
 	/* Attendances operations */
+	@RequestMapping(value = "/{id}/attendances", method = RequestMethod.GET)
+	public List<AttendanceData> getEventAttendances(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@PathVariable Long id) {
+
+		return this.eventsUtil.getEventAttendances(id);
+	}
+
 	@PreAuthorize("hasAuthority('USER')")
 	@RequestMapping(value = "/{id}/attendances", method = RequestMethod.POST)
 	public ResponseEntity<AttendanceData> createEventAttendance(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,

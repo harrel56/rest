@@ -1,5 +1,6 @@
 package web.rest.resources.events;
 
+import static web.rest.tools.conversion.ConversionUtil.toAttendanceDataObjectList;
 import static web.rest.tools.conversion.ConversionUtil.toDataObject;
 import static web.rest.tools.conversion.ConversionUtil.toEventDataObjectList;
 
@@ -89,6 +90,16 @@ public class EventsUtil {
 		event.setEndTime(eventDetails.getEndTime());
 		event.setState(eventDetails.getState());
 		this.eventDao.updateEvent(event);
+	}
+
+	public List<AttendanceData> getEventAttendances(Long id) {
+
+		Event event = this.eventDao.findEventById(id);
+		if (event == null) {
+			throw new ResourceNotFoundException();
+		}
+
+		return toAttendanceDataObjectList(event.getAttendances());
 	}
 
 	public AttendanceData createEventAttendance(Long id, String userId, AttendanceDetailsData attendanceDetails) {

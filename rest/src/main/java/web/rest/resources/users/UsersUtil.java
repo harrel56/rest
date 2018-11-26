@@ -1,5 +1,6 @@
 package web.rest.resources.users;
 
+import static web.rest.tools.conversion.ConversionUtil.toAttendanceDataObjectList;
 import static web.rest.tools.conversion.ConversionUtil.toDataObject;
 import static web.rest.tools.conversion.ConversionUtil.toEventDataObjectList;
 import static web.rest.tools.conversion.ConversionUtil.toLocationDataObjectList;
@@ -15,6 +16,7 @@ import hibernate.dao.UserDao;
 import hibernate.entities.User;
 import hibernate.search.UserSearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.users.model.UserData;
@@ -75,5 +77,15 @@ public class UsersUtil {
 		}
 
 		return toEventDataObjectList(user.getEvents());
+	}
+
+	public List<AttendanceData> getUserAttendances(String login) {
+
+		User user = this.userDao.findByLogin(login);
+		if (user == null) {
+			throw new ResourceNotFoundException();
+		}
+
+		return toAttendanceDataObjectList(user.getAttendances());
 	}
 }
