@@ -1,6 +1,9 @@
 package web.rest.resources.locations;
 
-import java.util.ArrayList;
+import static web.rest.tools.conversion.ConversionUtil.toDataObject;
+import static web.rest.tools.conversion.ConversionUtil.toEventDataObjectList;
+import static web.rest.tools.conversion.ConversionUtil.toLocationDataObjectList;
+
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -25,7 +28,6 @@ import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
-import web.rest.resources.users.UsersUtil;
 
 @Service
 public class LocationsUtil {
@@ -40,21 +42,18 @@ public class LocationsUtil {
 	private UserDao userDao;
 
 	@Autowired
-	private UsersUtil usersUtil;
-
-	@Autowired
 	private EventsUtil eventsUtil;
 
 	public List<LocationData> getLocations() {
-		return this.toDataObjectList(this.locationDao.getLocations());
+		return toLocationDataObjectList(this.locationDao.getLocations());
 	}
 
 	public List<LocationData> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams) {
-		return this.toDataObjectList(this.locationDao.getLocations(searchParams, sortParams));
+		return toLocationDataObjectList(this.locationDao.getLocations(searchParams, sortParams));
 	}
 
 	public LocationData getLocation(Long id) {
-		return this.toDataObject(this.locationDao.findLocationById(id));
+		return toDataObject(this.locationDao.findLocationById(id));
 	}
 
 	public List<EventData> getLocationEvents(Long id) {
@@ -64,7 +63,7 @@ public class LocationsUtil {
 			throw new ResourceNotFoundException();
 		}
 
-		return this.eventsUtil.toDataObjectList(location.getEvents());
+		return toEventDataObjectList(location.getEvents());
 	}
 
 	public LocationData createLocation(LocationDetailsData locationDetails, String creatorLogin) {
@@ -82,7 +81,7 @@ public class LocationsUtil {
 			location.setState(locationDetails.getState());
 
 			this.locationDao.addLocation(location);
-			return this.toDataObject(location);
+			return toDataObject(location);
 		} else {
 			throw new AccessDeniedException("Location creator not found!");
 		}
@@ -142,20 +141,5 @@ public class LocationsUtil {
 	public EventData createLocationEvent(Long id, EventDetailsData eventDetails, String creatorLogin) {
 
 		return this.eventsUtil.createEvent(this.locationDao.findLocationById(id), eventDetails, creatorLogin);
-	}
-
-	public List<LocationData> toDataObjectList(List<Location> locations) {
-		List<LocationData> locationDatas = new ArrayList<>(locations.size());
-		for (Location location : locations) {
-			locationDatas.add(this.toDataObject(location));
-		}
-		return locationDatas;
-	}
-
-	public LocationData toDataObject(Location location) {
-		return new LocationData(
-				location.getId(), this.usersUtil.toDataObject(location.getCreator()), new LocationDetailsData(location.getName(),
-						location.getDescription(), location.getLatitude(), location.getLongitude(), location.getState()),
-				location.getCreateTime(), location.getModifyTime());
 	}
 }

@@ -1,6 +1,10 @@
 package web.rest.resources.users;
 
-import java.util.ArrayList;
+import static web.rest.tools.conversion.ConversionUtil.toDataObject;
+import static web.rest.tools.conversion.ConversionUtil.toEventDataObjectList;
+import static web.rest.tools.conversion.ConversionUtil.toLocationDataObjectList;
+import static web.rest.tools.conversion.ConversionUtil.toUserDataObjectList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +15,7 @@ import hibernate.dao.UserDao;
 import hibernate.entities.User;
 import hibernate.search.UserSearchParams;
 import hibernate.sort.SortParams;
-import web.rest.resources.events.EventsUtil;
 import web.rest.resources.events.model.EventData;
-import web.rest.resources.locations.LocationsUtil;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.users.model.UserData;
 import web.rest.resources.users.model.UserDetailsData;
@@ -24,24 +26,18 @@ public class UsersUtil {
 	@Autowired
 	private UserDao userDao;
 
-	@Autowired
-	private LocationsUtil locationsUtil;
-
-	@Autowired
-	private EventsUtil eventsUtil;
-
 	public List<UserData> getUsers() {
-		return this.toDataObjectList(this.userDao.getUsers());
+		return toUserDataObjectList(this.userDao.getUsers());
 	}
 
 	public List<UserData> getUsers(UserSearchParams searchParams, SortParams<User> sortParams) {
-		return this.toDataObjectList(this.userDao.getUsers(searchParams, sortParams));
+		return toUserDataObjectList(this.userDao.getUsers(searchParams, sortParams));
 	}
 
 	public UserData getUserByLogin(String login) {
 		User user = this.userDao.findByLogin(login);
 		if (user != null) {
-			return this.toDataObject(user);
+			return toDataObject(user);
 		} else {
 			throw new ResourceNotFoundException();
 		}
@@ -68,7 +64,7 @@ public class UsersUtil {
 			throw new ResourceNotFoundException();
 		}
 
-		return this.locationsUtil.toDataObjectList(user.getLocations());
+		return toLocationDataObjectList(user.getLocations());
 	}
 
 	public List<EventData> getUserEvents(String login) {
@@ -78,19 +74,6 @@ public class UsersUtil {
 			throw new ResourceNotFoundException();
 		}
 
-		return this.eventsUtil.toDataObjectList(user.getEvents());
-	}
-
-	public List<UserData> toDataObjectList(List<User> users) {
-		List<UserData> userDatas = new ArrayList<>(users.size());
-		for (User user : users) {
-			userDatas.add(this.toDataObject(user));
-		}
-		return userDatas;
-	}
-
-	public UserData toDataObject(User user) {
-		return new UserData(user.getId(), user.getLogin(), user.getCreateTime(), user.getModifyTime(),
-				new UserDetailsData(user.getName(), user.getSurname(), user.getLocation(), user.getDateOfBirth()));
+		return toEventDataObjectList(user.getEvents());
 	}
 }

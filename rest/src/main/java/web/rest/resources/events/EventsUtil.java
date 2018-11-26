@@ -1,6 +1,8 @@
 package web.rest.resources.events;
 
-import java.util.ArrayList;
+import static web.rest.tools.conversion.ConversionUtil.toDataObject;
+import static web.rest.tools.conversion.ConversionUtil.toEventDataObjectList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,6 @@ import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.attendances.model.AttendanceDetailsData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
-import web.rest.resources.locations.LocationsUtil;
-import web.rest.resources.users.UsersUtil;
 
 @Service
 public class EventsUtil {
@@ -36,22 +36,16 @@ public class EventsUtil {
 	@Autowired
 	private AttendanceDao attendanceDao;
 
-	@Autowired
-	private LocationsUtil locationsUtil;
-
-	@Autowired
-	private UsersUtil usersUtil;
-
 	public List<EventData> getEvents() {
-		return this.toDataObjectList(this.eventDao.getEvents());
+		return toEventDataObjectList(this.eventDao.getEvents());
 	}
 
 	public List<EventData> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams) {
-		return this.toDataObjectList(this.eventDao.getEvents(searchParams, sortParams));
+		return toEventDataObjectList(this.eventDao.getEvents(searchParams, sortParams));
 	}
 
 	public EventData getEvent(Long id) {
-		return this.toDataObject(this.eventDao.findEventById(id));
+		return toDataObject(this.eventDao.findEventById(id));
 	}
 
 	public EventData createEvent(Location location, EventDetailsData eventDetails, String creatorLogin) {
@@ -74,7 +68,7 @@ public class EventsUtil {
 		event.setState(eventDetails.getState());
 
 		this.eventDao.addEvent(event);
-		return this.toDataObject(event);
+		return toDataObject(event);
 	}
 
 	public void updateEvent(Long id, EventDetailsData eventDetails, String modifierLogin) {
@@ -115,33 +109,6 @@ public class EventsUtil {
 		attendance.setType(attendanceDetails.getType());
 		this.attendanceDao.addAttendance(attendance);
 
-		return this.toDataObject(attendance);
-	}
-
-	public List<EventData> toDataObjectList(List<Event> events) {
-		List<EventData> locationDatas = new ArrayList<>(events.size());
-		for (Event event : events) {
-			locationDatas.add(this.toDataObject(event));
-		}
-		return locationDatas;
-	}
-
-	public EventData toDataObject(Event event) {
-		return new EventData(event.getId(), this.locationsUtil.toDataObject(event.getLocation()), this.usersUtil.toDataObject(event.getCreator()),
-				new EventDetailsData(event.getName(), event.getDescription(), event.getStartTime(), event.getEndTime(), event.getState()),
-				event.getCreateTime(), event.getModifyTime());
-	}
-
-//	public List<AttendanceData> toDataObjectList(List<Attendance> atts) {
-//		List<AttendanceData> attDatas = new ArrayList<>(atts.size());
-//		for (Attendance att : atts) {
-//			attDatas.add(this.toDataObject(att));
-//		}
-//		return attDatas;
-//	}
-
-	public AttendanceData toDataObject(Attendance att) {
-		return new AttendanceData(att.getId(), this.usersUtil.toDataObject(att.getUser()), this.toDataObject(att.getEvent()),
-				new AttendanceDetailsData(att.getType()), att.getCreateTime(), att.getModifyTime());
+		return toDataObject(attendance);
 	}
 }
