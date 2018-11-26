@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import hibernate.entities.Event;
 import hibernate.search.EventSearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.attendances.model.AttendanceData;
+import web.rest.resources.attendances.model.AttendanceDetailsData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.tools.validation.ValidationUtil;
@@ -37,7 +39,7 @@ public class EventsController {
 	private static transient final Logger logger = LoggerFactory.getLogger(EventsController.class);
 
 	@Autowired
-	EventsUtil eventsUtil;
+	private EventsUtil eventsUtil;
 
 	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
 	public List<EventData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
@@ -67,6 +69,18 @@ public class EventsController {
 		String modifierLogin = SecurityContextHolder.getContext().getAuthentication().getName();
 		this.eventsUtil.updateEvent(id, eventDetails, modifierLogin);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	/* Attendances operations */
+	@PreAuthorize("hasAuthority('USER')")
+	@RequestMapping(value = "/{id}/attendances", method = RequestMethod.POST)
+	public ResponseEntity<AttendanceData> createEventAttendance(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@PathVariable Long id, @Valid @RequestBody AttendanceDetailsData attendanceDetails, BindingResult validation) {
+
+		ValidationUtil.handleValidation(validation);
+
+		String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+		return new ResponseEntity<>(this.eventsUtil.createEventAttendance(id, userLogin, attendanceDetails), HttpStatus.CREATED);
 	}
 
 }

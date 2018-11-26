@@ -8,13 +8,17 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import hibernate.dao.AttendanceDao;
 import hibernate.dao.EventDao;
 import hibernate.dao.UserDao;
+import hibernate.entities.Attendance;
 import hibernate.entities.Event;
 import hibernate.entities.Location;
 import hibernate.entities.User;
 import hibernate.search.SearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.attendances.model.AttendanceData;
+import web.rest.resources.attendances.model.AttendanceDetailsData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.LocationsUtil;
@@ -28,6 +32,9 @@ public class EventsUtil {
 
 	@Autowired
 	private UserDao userDao;
+
+	@Autowired
+	private AttendanceDao attendanceDao;
 
 	@Autowired
 	private LocationsUtil locationsUtil;
@@ -90,6 +97,27 @@ public class EventsUtil {
 		this.eventDao.updateEvent(event);
 	}
 
+	public AttendanceData createEventAttendance(Long id, String userId, AttendanceDetailsData attendanceDetails) {
+
+		Event event = this.eventDao.findEventById(id);
+		if (event == null) {
+			throw new ResourceNotFoundException();
+		}
+
+		User user = this.userDao.findByLogin(userId);
+		if (user == null || !event.getCreator().getId().equals(user.getId())) {
+			throw new AccessDeniedException("");
+		}
+
+		Attendance attendance = new Attendance();
+		attendance.setEvent(event);
+		attendance.setUser(user);
+		attendance.setType(attendanceDetails.getType().name());
+		this.attendanceDao.addAttendance(attendance);
+
+		return this.toDataObject(attendance);
+	}
+
 	public List<EventData> toDataObjectList(List<Event> events) {
 		List<EventData> locationDatas = new ArrayList<>(events.size());
 		for (Event event : events) {
@@ -103,5 +131,18 @@ public class EventsUtil {
 				new EventDetailsData(event.getName(), event.getDescription(), event.getStartTime(), event.getEndTime(),
 						EventDetailsData.State.valueOf(event.getState())),
 				event.getCreateTime(), event.getModifyTime());
+	}
+
+//	public List<AttendanceData> toDataObjectList(List<Attendance> atts) {
+//		List<AttendanceData> attDatas = new ArrayList<>(atts.size());
+//		for (Attendance att : atts) {
+//			attDatas.add(this.toDataObject(att));
+//		}
+//		return attDatas;
+//	}
+
+	public AttendanceData toDataObject(Attendance att) {
+		return new AttendanceData(att.getId(), this.usersUtil.toDataObject(att.getUser()), this.toDataObject(att.getEvent()),
+				new AttendanceDetailsData(AttendanceDetailsData.Type.valueOf(att.getType())), att.getCreateTime(), att.getModifyTime());
 	}
 }

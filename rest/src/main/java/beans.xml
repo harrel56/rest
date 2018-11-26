@@ -18,6 +18,7 @@
 	<bean id = "userDao" class = "hibernate.dao.UserDao" />
 	<bean id = "LocationDao" class = "hibernate.dao.LocationDao" />
 	<bean id = "EventDao" class = "hibernate.dao.EventDao" />
+	<bean id = "AttendanceDao" class = "hibernate.dao.AttendanceDao" />
 
 	<!-- Utils -->
 	<bean id = "userManagementUtil" class = "web.rest.usermanagement.UserManagementUtil" />
