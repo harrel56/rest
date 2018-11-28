@@ -5,16 +5,17 @@ import java.sql.Timestamp;
 
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.users.model.UserData;
+import web.rest.tools.conversion.Expandable;
 
 @SuppressWarnings("serial")
 public class EventData implements Serializable {
 
-	private final Long id;
-	private final LocationData location;
-	private final UserData creator;
-	private final EventDetailsData eventDetails;
-	private final Timestamp createTime;
-	private final Timestamp modifyTime;
+	private Long id;
+	private LocationData location;
+	private UserData creator;
+	private EventDetailsData eventDetails;
+	private Timestamp createTime;
+	private Timestamp modifyTime;
 
 	public EventData(Long id, LocationData location, UserData user, EventDetailsData eventDetails, Timestamp createTime, Timestamp modifyTime) {
 		this.id = id;
@@ -29,23 +30,50 @@ public class EventData implements Serializable {
 		return this.id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public LocationData getLocation() {
 		return this.location;
+	}
+
+	@Expandable(name = "location")
+	public void setLocation(LocationData location) {
+		this.location = location;
 	}
 
 	public UserData getCreator() {
 		return this.creator;
 	}
 
+	@Expandable(name = "creator")
+	public void setCreator(UserData creator) {
+		this.creator = creator;
+	}
+
 	public EventDetailsData getEventDetails() {
 		return this.eventDetails;
+	}
+
+	public void setEventDetails(EventDetailsData eventDetails) {
+		this.eventDetails = eventDetails;
 	}
 
 	public Timestamp getCreateTime() {
 		return this.createTime;
 	}
 
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
+	}
+
 	public Timestamp getModifyTime() {
 		return this.modifyTime;
 	}
+
+	public void setModifyTime(Timestamp modifyTime) {
+		this.modifyTime = modifyTime;
+	}
+
 }

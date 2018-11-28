@@ -29,6 +29,7 @@ import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.attendances.model.AttendanceDetailsData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
+import web.rest.tools.conversion.DataExpander;
 import web.rest.tools.validation.ValidationUtil;
 
 @RestController
@@ -47,10 +48,11 @@ public class EventsController {
 			@RequestParam(name = "state", required = false) String state, @RequestParam(name = "startTimeGt", required = false) Timestamp startTimeGt,
 			@RequestParam(name = "startTimeLt", required = false) Timestamp startTimeLt,
 			@RequestParam(name = "endTimeGt", required = false) Timestamp endTimeGt,
-			@RequestParam(name = "endTimeLt", required = false) Timestamp endTimeLt, @RequestParam(name = "sort", required = false) String[] sorts) {
+			@RequestParam(name = "endTimeLt", required = false) Timestamp endTimeLt, @RequestParam(name = "sort", required = false) String[] sorts,
+			@RequestParam(name = "expand", required = false) String[] expands) {
 
 		return this.eventsUtil.getEvents(new EventSearchParams(name, description, state, startTimeGt, startTimeLt, endTimeGt, endTimeLt),
-				new SortParams<Event>(Event.class, sorts));
+				new SortParams<Event>(Event.class, sorts), new DataExpander(expands));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -74,9 +76,9 @@ public class EventsController {
 	/* Attendances operations */
 	@RequestMapping(value = "/{id}/attendances", method = RequestMethod.GET)
 	public List<AttendanceData> getEventAttendances(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@PathVariable Long id) {
+			@PathVariable Long id, @RequestParam(name = "expand", required = false) String[] expands) {
 
-		return this.eventsUtil.getEventAttendances(id);
+		return this.eventsUtil.getEventAttendances(id, new DataExpander(expands));
 	}
 
 	@PreAuthorize("hasAuthority('USER')")

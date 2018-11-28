@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import hibernate.search.SearchParamsException;
 import hibernate.sort.SortParamsException;
+import web.rest.tools.conversion.ExpandableException;
 
 @ControllerAdvice
 public class ExceptionHandlerController {
@@ -72,5 +73,13 @@ public class ExceptionHandlerController {
 	@ResponseBody
 	public ErrorResponse handleUnsupportedOperationException(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale) {
 		return new ErrorResponse(HttpStatus.BAD_REQUEST, this.messageSource.getMessage("resources.unsupportedOperation", null, locale));
+	}
+
+	@ExceptionHandler(ExpandableException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public ErrorResponse handleExpandableException(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			ExpandableException e) {
+		return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
 	}
 }

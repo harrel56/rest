@@ -19,6 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import hibernate.enums.AttendanceType;
+import web.rest.tools.conversion.Expandable;
 
 @SuppressWarnings("serial")
 @Entity
@@ -46,6 +47,7 @@ public class Attendance implements Serializable {
 		this.id = id;
 	}
 
+	@Expandable(name = "user")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_ID", nullable = false)
 	public User getUser() {
@@ -56,6 +58,7 @@ public class Attendance implements Serializable {
 		this.user = user;
 	}
 
+	@Expandable(name = "event")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EVENT_ID", nullable = false)
 	public Event getEvent() {

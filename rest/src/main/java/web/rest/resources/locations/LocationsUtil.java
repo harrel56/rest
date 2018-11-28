@@ -28,6 +28,7 @@ import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
+import web.rest.tools.conversion.DataExpander;
 
 @Service
 public class LocationsUtil {
@@ -48,8 +49,8 @@ public class LocationsUtil {
 		return toLocationDataObjectList(this.locationDao.getLocations());
 	}
 
-	public List<LocationData> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams) {
-		return toLocationDataObjectList(this.locationDao.getLocations(searchParams, sortParams));
+	public List<LocationData> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams, DataExpander expander) {
+		return toLocationDataObjectList(this.locationDao.getLocations(searchParams, sortParams), expander);
 	}
 
 	public LocationData getLocation(Long id) {

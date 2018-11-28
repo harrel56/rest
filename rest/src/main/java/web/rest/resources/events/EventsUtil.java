@@ -24,6 +24,7 @@ import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.attendances.model.AttendanceDetailsData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
+import web.rest.tools.conversion.DataExpander;
 
 @Service
 public class EventsUtil {
@@ -41,8 +42,8 @@ public class EventsUtil {
 		return toEventDataObjectList(this.eventDao.getEvents());
 	}
 
-	public List<EventData> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams) {
-		return toEventDataObjectList(this.eventDao.getEvents(searchParams, sortParams));
+	public List<EventData> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams, DataExpander expander) {
+		return toEventDataObjectList(this.eventDao.getEvents(searchParams, sortParams), expander);
 	}
 
 	public EventData getEvent(Long id) {
@@ -92,14 +93,14 @@ public class EventsUtil {
 		this.eventDao.updateEvent(event);
 	}
 
-	public List<AttendanceData> getEventAttendances(Long id) {
+	public List<AttendanceData> getEventAttendances(Long id, DataExpander expander) {
 
 		Event event = this.eventDao.findEventById(id);
 		if (event == null) {
 			throw new ResourceNotFoundException();
 		}
 
-		return toAttendanceDataObjectList(event.getAttendances());
+		return toAttendanceDataObjectList(event.getAttendances(), expander);
 	}
 
 	public AttendanceData createEventAttendance(Long id, String userId, AttendanceDetailsData attendanceDetails) {

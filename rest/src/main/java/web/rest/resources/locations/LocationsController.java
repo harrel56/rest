@@ -28,6 +28,7 @@ import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
+import web.rest.tools.conversion.DataExpander;
 import web.rest.tools.validation.ValidationUtil;
 
 @RestController
@@ -45,10 +46,10 @@ public class LocationsController {
 			@RequestParam(name = "name", required = false) String name, @RequestParam(name = "description", required = false) String description,
 			@RequestParam(name = "state", required = false) String state, @RequestParam(name = "latitude", required = false) Double latitude,
 			@RequestParam(name = "longitude", required = false) Double longitude, @RequestParam(name = "radius", required = false) Double radius,
-			@RequestParam(name = "sort", required = false) String[] sorts) {
+			@RequestParam(name = "sort", required = false) String[] sorts, @RequestParam(name = "expand", required = false) String[] expands) {
 
 		return this.locationsUtil.getLocations(new LocationSearchParams(name, description, state, latitude, longitude, radius),
-				new SortParams<Location>(Location.class, sorts));
+				new SortParams<Location>(Location.class, sorts), new DataExpander(expands));
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

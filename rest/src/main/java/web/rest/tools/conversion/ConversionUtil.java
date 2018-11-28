@@ -22,57 +22,106 @@ public class ConversionUtil {
 	}
 
 	public static List<UserData> toUserDataObjectList(List<User> users) {
+		return toUserDataObjectList(users, new DataExpander());
+	}
+
+	public static List<UserData> toUserDataObjectList(List<User> users, DataExpander expander) {
 		List<UserData> userDatas = new ArrayList<>(users.size());
 		for (User user : users) {
-			userDatas.add(toDataObject(user));
+			userDatas.add(toDataObject(user, expander));
 		}
 		return userDatas;
 	}
 
 	public static List<LocationData> toLocationDataObjectList(List<Location> locations) {
+		return toLocationDataObjectList(locations, new DataExpander());
+	}
+
+	public static List<LocationData> toLocationDataObjectList(List<Location> locations, DataExpander expander) {
 		List<LocationData> locationDatas = new ArrayList<>(locations.size());
 		for (Location location : locations) {
-			locationDatas.add(toDataObject(location));
+			locationDatas.add(toDataObject(location, expander));
 		}
 		return locationDatas;
 	}
 
 	public static List<EventData> toEventDataObjectList(List<Event> events) {
-		List<EventData> locationDatas = new ArrayList<>(events.size());
+		return toEventDataObjectList(events, new DataExpander());
+	}
+
+	public static List<EventData> toEventDataObjectList(List<Event> events, DataExpander expander) {
+		List<EventData> eventDatas = new ArrayList<>(events.size());
 		for (Event event : events) {
-			locationDatas.add(toDataObject(event));
+			eventDatas.add(toDataObject(event, expander));
 		}
-		return locationDatas;
+		return eventDatas;
 	}
 
 	public static List<AttendanceData> toAttendanceDataObjectList(List<Attendance> atts) {
+		return toAttendanceDataObjectList(atts, new DataExpander());
+	}
+
+	public static List<AttendanceData> toAttendanceDataObjectList(List<Attendance> atts, DataExpander expander) {
 		List<AttendanceData> attDatas = new ArrayList<>(atts.size());
 		for (Attendance att : atts) {
-			attDatas.add(toDataObject(att));
+			attDatas.add(toDataObject(att, expander));
 		}
 		return attDatas;
 	}
 
+	@Conversion
 	public static UserData toDataObject(User user) {
-		return new UserData(user.getId(), user.getLogin(), user.getCreateTime(), user.getModifyTime(),
+		return toDataObject(user, new DataExpander());
+	}
+
+	public static UserData toDataObject(User user, DataExpander expander) {
+		UserData result = new UserData(user.getId(), user.getLogin(), user.getCreateTime(), user.getModifyTime(),
 				new UserDetailsData(user.getName(), user.getSurname(), user.getLocation(), user.getDateOfBirth()));
+
+		expander.to(UserData.class).from(User.class).expand(result, user);
+		return result;
 	}
 
+	@Conversion
 	public static LocationData toDataObject(Location location) {
-		return new LocationData(location.getId(), toDataObject(location.getCreator()), new LocationDetailsData(location.getName(),
-				location.getDescription(), location.getLatitude(), location.getLongitude(), location.getState()), location.getCreateTime(),
-				location.getModifyTime());
+		return toDataObject(location, new DataExpander());
 	}
 
+	public static LocationData toDataObject(Location location, DataExpander expander) {
+
+		LocationData result = new LocationData(location.getId(), null, new LocationDetailsData(location.getName(), location.getDescription(),
+				location.getLatitude(), location.getLongitude(), location.getState()), location.getCreateTime(), location.getModifyTime());
+
+		expander.to(LocationData.class).from(Location.class).expand(result, location);
+		return result;
+	}
+
+	@Conversion
 	public static EventData toDataObject(Event event) {
-		return new EventData(event.getId(), toDataObject(event.getLocation()), toDataObject(event.getCreator()),
+		return toDataObject(event, new DataExpander());
+	}
+
+	public static EventData toDataObject(Event event, DataExpander expander) {
+		EventData result = new EventData(event.getId(), null, null,
 				new EventDetailsData(event.getName(), event.getDescription(), event.getStartTime(), event.getEndTime(), event.getState()),
 				event.getCreateTime(), event.getModifyTime());
+
+		expander.to(EventData.class).from(Event.class).expand(result, event);
+		return result;
 	}
 
+	@Conversion
 	public static AttendanceData toDataObject(Attendance att) {
-		return new AttendanceData(att.getId(), toDataObject(att.getUser()), toDataObject(att.getEvent()), new AttendanceDetailsData(att.getType()),
-				att.getCreateTime(), att.getModifyTime());
+		return toDataObject(att, new DataExpander());
+	}
+
+	public static AttendanceData toDataObject(Attendance att, DataExpander expander) {
+
+		AttendanceData result = new AttendanceData(att.getId(), null, null, new AttendanceDetailsData(att.getType()), att.getCreateTime(),
+				att.getModifyTime());
+
+		expander.to(AttendanceData.class).from(Attendance.class).expand(result, att);
+		return result;
 	}
 
 }
