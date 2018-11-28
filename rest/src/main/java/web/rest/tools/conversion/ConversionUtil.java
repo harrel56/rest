@@ -75,6 +75,11 @@ public class ConversionUtil {
 	}
 
 	public static UserData toDataObject(User user, DataExpander expander) {
+
+		if (user == null) {
+			return null;
+		}
+
 		UserData result = new UserData(user.getId(), user.getLogin(), user.getCreateTime(), user.getModifyTime(),
 				new UserDetailsData(user.getName(), user.getSurname(), user.getLocation(), user.getDateOfBirth()));
 
@@ -89,6 +94,10 @@ public class ConversionUtil {
 
 	public static LocationData toDataObject(Location location, DataExpander expander) {
 
+		if (location == null) {
+			return null;
+		}
+
 		LocationData result = new LocationData(location.getId(), null, new LocationDetailsData(location.getName(), location.getDescription(),
 				location.getLatitude(), location.getLongitude(), location.getState()), location.getCreateTime(), location.getModifyTime());
 
@@ -102,6 +111,11 @@ public class ConversionUtil {
 	}
 
 	public static EventData toDataObject(Event event, DataExpander expander) {
+
+		if (event == null) {
+			return null;
+		}
+
 		EventData result = new EventData(event.getId(), null, null,
 				new EventDetailsData(event.getName(), event.getDescription(), event.getStartTime(), event.getEndTime(), event.getState()),
 				event.getCreateTime(), event.getModifyTime());
@@ -116,6 +130,10 @@ public class ConversionUtil {
 	}
 
 	public static AttendanceData toDataObject(Attendance att, DataExpander expander) {
+
+		if (att == null) {
+			return null;
+		}
 
 		AttendanceData result = new AttendanceData(att.getId(), null, null, new AttendanceDetailsData(att.getType()), att.getCreateTime(),
 				att.getModifyTime());
