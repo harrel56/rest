@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import hibernate.entities.Event;
-import hibernate.search.EventSearchParams;
 import hibernate.search.SearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.paging.PagingData;
 
 @Repository
 public class EventDao {
@@ -57,17 +57,7 @@ public class EventDao {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Event> getEvents(SearchParams<Event> searchParams) {
-		return this.getEvents(searchParams, SortParams.empty());
-	}
-
-	@Transactional(readOnly = true)
-	public List<Event> getEvents(SortParams<Event> sortParams) {
-		return this.getEvents(EventSearchParams.empty(), sortParams);
-	}
-
-	@Transactional(readOnly = true)
-	public List<Event> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams) {
+	public List<Event> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams, PagingData pagingData) {
 		CriteriaBuilder builder = this.em.getCriteriaBuilder();
 		CriteriaQuery<Event> crit = builder.createQuery(Event.class);
 		Root<Event> root = crit.from(Event.class);
@@ -75,7 +65,7 @@ public class EventDao {
 		searchParams.applySearchFilters(builder, crit, root);
 		sortParams.applySortParams(builder, crit, root);
 
-		return this.em.createQuery(crit).getResultList();
+		return this.em.createQuery(crit).setFirstResult(pagingData.firstPos).setMaxResults(pagingData.size).getResultList();
 	}
 
 }

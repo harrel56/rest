@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,6 +30,7 @@ import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.attendances.model.AttendanceDetailsData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
+import web.rest.resources.paging.PagingData;
 import web.rest.tools.conversion.DataExpander;
 import web.rest.tools.validation.ValidationUtil;
 
@@ -43,20 +45,21 @@ public class EventsController {
 	private EventsUtil eventsUtil;
 
 	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
-	public List<EventData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@RequestParam(name = "name", required = false) String name, @RequestParam(name = "description", required = false) String description,
-			@RequestParam(name = "state", required = false) String state, @RequestParam(name = "startTimeGt", required = false) Timestamp startTimeGt,
+	public List<EventData> getEvents(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@ModelAttribute PagingData pagingData, @RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "description", required = false) String description, @RequestParam(name = "state", required = false) String state,
+			@RequestParam(name = "startTimeGt", required = false) Timestamp startTimeGt,
 			@RequestParam(name = "startTimeLt", required = false) Timestamp startTimeLt,
 			@RequestParam(name = "endTimeGt", required = false) Timestamp endTimeGt,
 			@RequestParam(name = "endTimeLt", required = false) Timestamp endTimeLt, @RequestParam(name = "sort", required = false) String[] sorts,
 			@RequestParam(name = "expand", required = false) String[] expands) {
 
 		return this.eventsUtil.getEvents(new EventSearchParams(name, description, state, startTimeGt, startTimeLt, endTimeGt, endTimeLt),
-				new SortParams<Event>(Event.class, sorts), new DataExpander(expands));
+				new SortParams<Event>(Event.class, sorts), new DataExpander(expands), pagingData);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public EventData getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
+	public EventData getEvent(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
 
 		return this.eventsUtil.getEvent(id);
 	}
