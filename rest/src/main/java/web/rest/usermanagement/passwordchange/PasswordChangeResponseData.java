@@ -5,7 +5,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class PasswordChangeResponseData implements Serializable {
 
-	public static enum ResponseState {
+	public enum ResponseState {
 		CHANGED, PASSWORD_THE_SAME, PASSWORD_INVALID, NEW_PASSWORD_INVALID, UNKNOWN_ERROR
 	}
 

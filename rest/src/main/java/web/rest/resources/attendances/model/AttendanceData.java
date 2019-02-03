@@ -10,17 +10,12 @@ import web.rest.tools.conversion.Expandable;
 @SuppressWarnings("serial")
 public class AttendanceData implements Serializable {
 
-	// public static final Set<String> expandables = ImmutableSet.<String>of("user",
-	// "event");
-
 	private Long id;
 	private UserData user;
 	private EventData event;
 	private AttendanceDetailsData attendanceDetails;
 	private Timestamp createTime;
 	private Timestamp modifyTime;
-
-	// public final Set<String> expandable = expandables;
 
 	public AttendanceData(Long id, UserData user, EventData event, AttendanceDetailsData attendanceDetails, Timestamp createTime,
 			Timestamp modifyTime) {

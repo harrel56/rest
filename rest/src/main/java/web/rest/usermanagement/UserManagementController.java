@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +30,7 @@ import web.rest.usermanagement.register.UserRegistrationResponseData;
 public class UserManagementController {
 
 	@SuppressWarnings("unused")
-	private static transient final Logger logger = LoggerFactory.getLogger(UserManagementController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserManagementController.class);
 
 	@Autowired
 	private UserManagementUtil userManagementUtil;
@@ -37,7 +38,7 @@ public class UserManagementController {
 	@Autowired
 	private UserManagementResponseCreator responseCreator;
 
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	@PostMapping("/register")
 	public ResponseEntity<UserRegistrationResponseData> register(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@Valid @RequestBody UserRegistrationRequestData userData) {
 
@@ -50,7 +51,7 @@ public class UserManagementController {
 		return this.responseCreator.createRegistrationResponse(locale, state);
 	}
 
-	@RequestMapping(value = "/resend-activation", method = RequestMethod.GET)
+	@GetMapping("/resend-activation")
 	public ResponseEntity<ResendActivationResponseData> resendActivation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestParam String login) {
 
@@ -59,7 +60,7 @@ public class UserManagementController {
 		return this.responseCreator.createResendActivationResponse(locale, state);
 	}
 
-	@RequestMapping(value = "/activate", method = RequestMethod.GET)
+	@GetMapping("/activate")
 	public ResponseEntity<UserActivationResponseData> activate(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestParam String login, @RequestParam("a_str") String activationString) {
 
@@ -69,7 +70,7 @@ public class UserManagementController {
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/change-password", method = RequestMethod.POST)
+	@PostMapping("/change-password")
 	public ResponseEntity<PasswordChangeResponseData> changePassword(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@Valid @RequestBody PasswordChangeRequestData passwordData) {
 

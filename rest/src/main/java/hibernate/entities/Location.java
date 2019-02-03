@@ -42,7 +42,7 @@ public class Location implements Serializable {
 	private Timestamp createTime;
 	private Timestamp modifyTime;
 	private State state;
-	private List<Event> events = new ArrayList<Event>(0);
+	private List<Event> events = new ArrayList<>(0);
 
 	public Location() {
 	}

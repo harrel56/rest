@@ -22,7 +22,7 @@ import web.rest.usermanagement.register.UserRegistrationResponseData;
 @Service
 public class UserManagementUtil {
 
-	private static transient final Logger logger = LoggerFactory.getLogger(UserManagementUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(UserManagementUtil.class);
 
 	@Autowired
 	private UserDao userDao;
@@ -148,7 +148,7 @@ public class UserManagementUtil {
 	}
 
 	private boolean isEmailUnique(String email) {
-		return this.userDao.findByEmail(email).isEmpty();
+		return this.userDao.findByEmail(email) == null;
 	}
 
 	private boolean isLoginValid(String login) {

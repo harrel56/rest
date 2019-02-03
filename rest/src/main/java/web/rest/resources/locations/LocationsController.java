@@ -13,11 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,12 +38,12 @@ import web.rest.tools.validation.ValidationUtil;
 public class LocationsController {
 
 	@SuppressWarnings("unused")
-	private static transient final Logger logger = LoggerFactory.getLogger(LocationsController.class);
+	private static final Logger logger = LoggerFactory.getLogger(LocationsController.class);
 
 	@Autowired
 	LocationsUtil locationsUtil;
 
-	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
+	@GetMapping({ "", "/" })
 	public List<LocationData> getLocations(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestParam(name = "name", required = false) String name, @RequestParam(name = "description", required = false) String description,
 			@RequestParam(name = "state", required = false) String state, @RequestParam(name = "latitude", required = false) Double latitude,
@@ -52,14 +54,14 @@ public class LocationsController {
 				new SortParams<Location>(Location.class, sorts), new DataExpander(expands));
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public LocationData getLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
 
 		return this.locationsUtil.getLocation(id);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = { "", "/" }, method = RequestMethod.POST)
+	@PostMapping({ "", "/" })
 	public ResponseEntity<LocationData> createLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@Valid @RequestBody LocationDetailsData location, BindingResult validation) {
 
@@ -70,7 +72,7 @@ public class LocationsController {
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<Void> updateLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id,
 			@Valid @RequestBody LocationDetailsData location, BindingResult validation) {
 
@@ -81,14 +83,14 @@ public class LocationsController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-	@RequestMapping(value = "/{id}/events", method = RequestMethod.GET)
+	@GetMapping("/{id}/events")
 	public List<EventData> getEventsByLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
 
 		return this.locationsUtil.getLocationEvents(id);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/{id}/events", method = RequestMethod.POST)
+	@PostMapping("/{id}/events")
 	public EventData createEventByLocation(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id,
 			@Valid @RequestBody EventDetailsData eventDetails, BindingResult validation) {
 

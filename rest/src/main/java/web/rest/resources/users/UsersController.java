@@ -11,11 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,12 +34,12 @@ import web.rest.resources.users.model.UserDetailsData;
 public class UsersController {
 
 	@SuppressWarnings("unused")
-	private static transient final Logger logger = LoggerFactory.getLogger(UsersController.class);
+	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
 	@Autowired
 	UsersUtil usersUtil;
 
-	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
+	@GetMapping({ "", "/" })
 	public List<UserData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@RequestParam(name = "login", required = false) String login, @RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "surname", required = false) String surname, @RequestParam(name = "location", required = false) String location,
@@ -47,14 +48,14 @@ public class UsersController {
 		return this.usersUtil.getUsers(new UserSearchParams(login, name, surname, location), new SortParams<User>(User.class, sorts));
 	}
 
-	@RequestMapping(value = "/{login}", method = RequestMethod.GET)
+	@GetMapping("/{login}")
 	public UserData getUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable String login) {
 
 		return this.usersUtil.getUserByLogin(login);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/{login}", method = RequestMethod.PUT)
+	@PutMapping("/{login}")
 	public ResponseEntity<Void> updateUser(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable String login,
 			@RequestBody UserDetailsData userDetails) {
 
@@ -66,20 +67,20 @@ public class UsersController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-	@RequestMapping(value = "/{login}/locations", method = RequestMethod.GET)
+	@GetMapping("/{login}/locations")
 	public List<LocationData> getUserLocations(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@PathVariable String login) {
 
 		return this.usersUtil.getUserLocations(login);
 	}
 
-	@RequestMapping(value = "/{login}/events", method = RequestMethod.GET)
+	@GetMapping("/{login}/events")
 	public List<EventData> getUserEvents(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable String login) {
 
 		return this.usersUtil.getUserEvents(login);
 	}
 
-	@RequestMapping(value = "/{login}/attendances", method = RequestMethod.GET)
+	@GetMapping("/{login}/attendances")
 	public List<AttendanceData> getUserAttendances(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@PathVariable String login) {
 

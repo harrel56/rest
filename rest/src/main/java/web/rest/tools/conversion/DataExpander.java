@@ -11,7 +11,7 @@ public class DataExpander {
 	 * Map containing conversion methods, accessible by methods' first parameter
 	 * class.
 	 */
-	private final static Map<Class<?>, Method> conversions = new HashMap<>();
+	private static final Map<Class<?>, Method> conversions = new HashMap<>();
 
 	static {
 		for (Method method : ConversionUtil.class.getMethods()) {
@@ -81,14 +81,12 @@ public class DataExpander {
 				setterMethod.invoke(to, convertedValue);
 			}
 
-		} catch (IllegalAccessException e) {
+		} catch (IllegalAccessException | SecurityException e) {
 			throw new DataExpansionException("Method is not accessible (public)", e);
 		} catch (IllegalArgumentException e) {
 			throw new DataExpansionException("Method signature is invalid", e);
 		} catch (InvocationTargetException e) {
 			throw new DataExpansionException("Wrong type", e);
-		} catch (SecurityException e) {
-			throw new DataExpansionException("Method is not accessible (public)", e);
 		}
 	}
 

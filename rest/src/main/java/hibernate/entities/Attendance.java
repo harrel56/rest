@@ -33,9 +33,6 @@ public class Attendance implements Serializable {
 	private Timestamp createTime;
 	private Timestamp modifyTime;
 
-	public Attendance() {
-	}
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false)

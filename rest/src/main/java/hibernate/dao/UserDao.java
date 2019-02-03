@@ -2,89 +2,59 @@ package hibernate.dao;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import hibernate.entities.User;
 import hibernate.search.SearchParams;
-import hibernate.search.UserSearchParams;
 import hibernate.sort.SortParams;
 
 @Repository
 public class UserDao {
 
-	@PersistenceContext
-	private EntityManager em;
+	@Autowired
+	private CommonDao commonDao;
 
 	@Transactional
 	public void addUser(User user) {
-		this.em.persist(user);
+		this.commonDao.persist(user);
 	}
 
 	@Transactional
 	public User updateUser(User user) {
-		return this.em.merge(user);
+		return this.commonDao.merge(user);
 	}
 
 	@Transactional(readOnly = true)
 	public List<User> getUsers() {
-		CriteriaBuilder builder = this.em.getCriteriaBuilder();
-		CriteriaQuery<User> crit = builder.createQuery(User.class);
-		Root<User> root = crit.from(User.class);
-		crit.select(root);
-		return this.em.createQuery(crit).getResultList();
-	}
-
-	@Transactional(readOnly = true)
-	public List<User> getUsers(SearchParams<User> searchParams) {
-		return this.getUsers(searchParams, SortParams.empty());
-	}
-
-	@Transactional(readOnly = true)
-	public List<User> getUsers(SortParams<User> sortParams) {
-		return this.getUsers(UserSearchParams.empty(), sortParams);
+		return this.commonDao.findAll(User.class);
 	}
 
 	@Transactional(readOnly = true)
 	public List<User> getUsers(SearchParams<User> searchParams, SortParams<User> sortParams) {
-		CriteriaBuilder builder = this.em.getCriteriaBuilder();
+		CriteriaBuilder builder = this.commonDao.getCriteriaBuilder();
 		CriteriaQuery<User> crit = builder.createQuery(User.class);
 		Root<User> root = crit.from(User.class);
 
 		searchParams.applySearchFilters(builder, crit, root);
-		sortParams.applySortParams(builder, crit, root);
+		sortParams.applySortParams(crit, root);
 
-		return this.em.createQuery(crit).getResultList();
+		return this.commonDao.findByCriteria(User.class, crit);
 	}
 
 	@Transactional(readOnly = true)
 	public User findByLogin(String login) {
-		CriteriaBuilder builder = this.em.getCriteriaBuilder();
-		CriteriaQuery<User> crit = builder.createQuery(User.class);
-		Root<User> root = crit.from(User.class);
-		crit.where(builder.equal(root.get("login"), login));
-
-		List<User> users = this.em.createQuery(crit).getResultList();
-		if (!users.isEmpty()) {
-			return users.get(0);
-		} else {
-			return null;
-		}
+		return this.commonDao.findFirstByField(User.class, "login", login);
 	}
 
 	@Transactional(readOnly = true)
-	public List<User> findByEmail(String email) {
-		CriteriaBuilder builder = this.em.getCriteriaBuilder();
-		CriteriaQuery<User> crit = builder.createQuery(User.class);
-		Root<User> root = crit.from(User.class);
-		crit.where(builder.equal(root.get("email"), email));
-		return this.em.createQuery(crit).getResultList();
+	public User findByEmail(String email) {
+		return this.commonDao.findFirstByField(User.class, "email", email);
 	}
 
 }

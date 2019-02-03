@@ -97,7 +97,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private static class MyTokenEnhancer implements TokenEnhancer {
 		@Override
 		public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-			// TODO Auto-generated method stub
 			return accessToken;
 		}
 	}

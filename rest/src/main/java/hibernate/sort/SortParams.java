@@ -3,7 +3,6 @@ package hibernate.sort;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Order;
@@ -24,7 +23,7 @@ public class SortParams<T> {
 	 * Empty constructor as a shorthand for no sorting
 	 */
 	public static <T> SortParams<T> empty() {
-		return new SortParams<T>();
+		return new SortParams<>();
 	}
 
 	private SortParams() {
@@ -35,7 +34,7 @@ public class SortParams<T> {
 		this.sorts = sorts;
 	}
 
-	public void applySortParams(CriteriaBuilder builder, CriteriaQuery<T> crit, Root<T> root) {
+	public void applySortParams(CriteriaQuery<T> crit, Root<T> root) {
 
 		if (this.sorts != null) {
 			this.root = root;

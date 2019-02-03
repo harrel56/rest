@@ -14,12 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,12 +41,12 @@ import web.rest.tools.validation.ValidationUtil;
 public class EventsController {
 
 	@SuppressWarnings("unused")
-	private static transient final Logger logger = LoggerFactory.getLogger(EventsController.class);
+	private static final Logger logger = LoggerFactory.getLogger(EventsController.class);
 
 	@Autowired
 	private EventsUtil eventsUtil;
 
-	@RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
+	@GetMapping({ "", "/" })
 	public List<EventData> getEvents(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@ModelAttribute PagingData pagingData, @RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "description", required = false) String description, @RequestParam(name = "state", required = false) String state,
@@ -58,14 +60,14 @@ public class EventsController {
 				new SortParams<Event>(Event.class, sorts), new DataExpander(expands), pagingData);
 	}
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@GetMapping("/{id}")
 	public EventData getEvent(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id) {
 
 		return this.eventsUtil.getEvent(id);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	@PutMapping("/{id}")
 	public ResponseEntity<Void> updateEvent(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale, @PathVariable Long id,
 			@Valid @RequestBody EventDetailsData eventDetails, BindingResult validation) {
 
@@ -77,7 +79,7 @@ public class EventsController {
 	}
 
 	/* Attendances operations */
-	@RequestMapping(value = "/{id}/attendances", method = RequestMethod.GET)
+	@GetMapping("/{id}/attendances")
 	public List<AttendanceData> getEventAttendances(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@PathVariable Long id, @RequestParam(name = "expand", required = false) String[] expands) {
 
@@ -85,7 +87,7 @@ public class EventsController {
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
-	@RequestMapping(value = "/{id}/attendances", method = RequestMethod.POST)
+	@PostMapping("/{id}/attendances")
 	public ResponseEntity<AttendanceData> createEventAttendance(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
 			@PathVariable Long id, @Valid @RequestBody AttendanceDetailsData attendanceDetails, BindingResult validation) {
 

@@ -12,9 +12,6 @@ public class AttendanceDetailsData implements Serializable {
 	@NotNull(message = "validation.attendanceDetails.type")
 	private AttendanceType type;
 
-	public AttendanceDetailsData() {
-	}
-
 	public AttendanceDetailsData(AttendanceType type) {
 		this.type = type;
 	}

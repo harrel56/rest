@@ -5,7 +5,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class ResendActivationResponseData implements Serializable {
 
-	public static enum ResponseState {
+	public enum ResponseState {
 		RESENT, USER_ALREADY_ACTIVATED, USER_INVALID, UNKNOWN_ERROR
 	}
 

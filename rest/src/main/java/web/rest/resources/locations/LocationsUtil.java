@@ -5,7 +5,6 @@ import static web.rest.tools.conversion.ConversionUtil.toEventDataObjectList;
 import static web.rest.tools.conversion.ConversionUtil.toLocationDataObjectList;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -113,15 +112,8 @@ public class LocationsUtil {
 
 			/* Check if there are any non modifier events attached to this location */
 			List<Event> events = location.getEvents();
-			boolean usedBySomeone = events.stream().anyMatch(new Predicate<Event>() {
 
-				@Override
-				public boolean test(Event event) {
-					return !event.getCreator().getId().equals(modifier.getId());
-				}
-			});
-
-			if (usedBySomeone) {
+			if (events.stream().anyMatch(e -> !e.getCreator().getId().equals(modifier.getId()))) {
 				throw new UnsupportedOperationException();
 			}
 

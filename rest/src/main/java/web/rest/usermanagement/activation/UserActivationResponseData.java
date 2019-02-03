@@ -5,7 +5,7 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class UserActivationResponseData implements Serializable {
 
-	public static enum ResponseState {
+	public enum ResponseState {
 		ACTIVATED, FAILED, UNKNOWN_ERROR
 	}
 
