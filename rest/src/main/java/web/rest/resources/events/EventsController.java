@@ -9,10 +9,12 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,7 +34,8 @@ import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.attendances.model.AttendanceDetailsData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
-import web.rest.resources.paging.PagingData;
+import web.rest.resources.pagination.Paginated;
+import web.rest.resources.pagination.PaginationParams;
 import web.rest.tools.conversion.DataExpander;
 import web.rest.tools.validation.ValidationUtil;
 
@@ -46,9 +49,10 @@ public class EventsController {
 	@Autowired
 	private EventsUtil eventsUtil;
 
+	@Paginated
 	@GetMapping({ "", "/" })
-	public List<EventData> getEvents(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@ModelAttribute PagingData pagingData, @RequestParam(name = "name", required = false) String name,
+	public ResponseEntity<List<EventData>> getEvents(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@ModelAttribute PaginationParams paginationParams, @RequestParam(name = "name", required = false) String name,
 			@RequestParam(name = "description", required = false) String description, @RequestParam(name = "state", required = false) String state,
 			@RequestParam(name = "startTimeGt", required = false) Timestamp startTimeGt,
 			@RequestParam(name = "startTimeLt", required = false) Timestamp startTimeLt,
@@ -56,8 +60,15 @@ public class EventsController {
 			@RequestParam(name = "endTimeLt", required = false) Timestamp endTimeLt, @RequestParam(name = "sort", required = false) String[] sorts,
 			@RequestParam(name = "expand", required = false) String[] expands) {
 
-		return this.eventsUtil.getEvents(new EventSearchParams(name, description, state, startTimeGt, startTimeLt, endTimeGt, endTimeLt),
-				new SortParams<Event>(Event.class, sorts), new DataExpander(expands), pagingData);
+		EventSearchParams searchParams = new EventSearchParams(name, description, state, startTimeGt, startTimeLt, endTimeGt, endTimeLt);
+		Long total = this.eventsUtil.getEventsCount(searchParams);
+
+		MultiValueMap<String, String> headers = new HttpHeaders();
+		headers.add("total", total.toString());
+
+		return new ResponseEntity<>(
+				this.eventsUtil.getEvents(searchParams, new SortParams<Event>(Event.class, sorts), new DataExpander(expands), paginationParams),
+				headers, HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")

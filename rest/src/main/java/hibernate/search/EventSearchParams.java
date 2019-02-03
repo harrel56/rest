@@ -44,7 +44,7 @@ public class EventSearchParams implements SearchParams<Event> {
 	}
 
 	@Override
-	public void applySearchFilters(CriteriaBuilder builder, CriteriaQuery<Event> crit, Root<Event> root) {
+	public void applySearchFilters(CriteriaBuilder builder, CriteriaQuery<?> crit, Root<Event> root) {
 
 		List<Predicate> predicates = new ArrayList<>();
 

@@ -7,9 +7,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import web.rest.resources.pagination.PaginationParams;
 
 @Repository
 public class CommonDao {
@@ -68,6 +71,34 @@ public class CommonDao {
 	@Transactional(readOnly = true)
 	public <T> List<T> findByCriteria(Class<T> clazz, CriteriaQuery<T> crit) {
 		return this.em.createQuery(crit).getResultList();
+	}
+
+	/**
+	 * Finds paginated list of objects from given class which match given criteria
+	 * 
+	 * @param clazz            class of entity class
+	 * @param criteria
+	 * @param paginationParams pagination params provided by user
+	 * @return List of objects of class T
+	 */
+	@Transactional(readOnly = true)
+	public <T> List<T> findPaginatedByCriteria(Class<T> clazz, CriteriaQuery<T> crit, PaginationParams paginationParams) {
+		return this.em.createQuery(crit).setFirstResult(paginationParams.getFirstPos()).setMaxResults(paginationParams.size).getResultList();
+	}
+
+	/**
+	 * Same as {@link #findByCriteria(Class, CriteriaQuery)} but instead of
+	 * returning list of object, it returns number of matching objects
+	 * 
+	 * @param clazz
+	 * @param crit
+	 * @return Number of matching objects
+	 */
+	@NotNull
+	@Transactional(readOnly = true)
+	public <T> Long findCountByCriteria(Class<T> clazz, CriteriaQuery<Long> crit, Root<T> root) {
+		crit.select(this.getCriteriaBuilder().count(root));
+		return this.em.createQuery(crit).getSingleResult();
 	}
 
 	/**

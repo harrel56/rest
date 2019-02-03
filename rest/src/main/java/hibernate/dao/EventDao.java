@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import hibernate.entities.Event;
 import hibernate.search.SearchParams;
 import hibernate.sort.SortParams;
-import web.rest.resources.paging.PagingData;
+import web.rest.resources.pagination.PaginationParams;
 
 @Repository
 public class EventDao {
@@ -42,7 +42,7 @@ public class EventDao {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Event> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams, PagingData pagingData) {
+	public List<Event> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams, PaginationParams paginationParams) {
 		CriteriaBuilder builder = this.commonDao.getCriteriaBuilder();
 		CriteriaQuery<Event> crit = builder.createQuery(Event.class);
 		Root<Event> root = crit.from(Event.class);
@@ -51,6 +51,17 @@ public class EventDao {
 		sortParams.applySortParams(crit, root);
 
 		return this.commonDao.findByCriteria(Event.class, crit);
+	}
+
+	@Transactional(readOnly = true)
+	public Long getEventsCount(SearchParams<Event> searchParams) {
+		CriteriaBuilder builder = this.commonDao.getCriteriaBuilder();
+		CriteriaQuery<Long> crit = builder.createQuery(Long.class);
+		Root<Event> root = crit.from(Event.class);
+
+		searchParams.applySearchFilters(builder, crit, root);
+
+		return this.commonDao.findCountByCriteria(Event.class, crit, root);
 	}
 
 }

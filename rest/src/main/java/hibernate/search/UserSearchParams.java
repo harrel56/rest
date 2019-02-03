@@ -35,7 +35,7 @@ public class UserSearchParams implements SearchParams<User> {
 	}
 
 	@Override
-	public void applySearchFilters(CriteriaBuilder builder, CriteriaQuery<User> crit, Root<User> root) {
+	public void applySearchFilters(CriteriaBuilder builder, CriteriaQuery<?> crit, Root<User> root) {
 
 		List<Predicate> predicates = new ArrayList<>();
 

@@ -50,7 +50,7 @@ public class LocationSearchParams implements SearchParams<Location> {
 	}
 
 	@Override
-	public void applySearchFilters(CriteriaBuilder builder, CriteriaQuery<Location> crit, Root<Location> root) {
+	public void applySearchFilters(CriteriaBuilder builder, CriteriaQuery<?> crit, Root<Location> root) {
 
 		List<Predicate> predicates = new ArrayList<>();
 

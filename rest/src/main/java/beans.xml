@@ -15,6 +15,7 @@
 	<context:annotation-config/>
 
 	<!-- Daos -->
+	<bean id = "commonDao" class = "hibernate.dao.CommonDao" />
 	<bean id = "userDao" class = "hibernate.dao.UserDao" />
 	<bean id = "LocationDao" class = "hibernate.dao.LocationDao" />
 	<bean id = "EventDao" class = "hibernate.dao.EventDao" />

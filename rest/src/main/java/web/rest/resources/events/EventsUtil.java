@@ -24,7 +24,7 @@ import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.attendances.model.AttendanceDetailsData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
-import web.rest.resources.paging.PagingData;
+import web.rest.resources.pagination.PaginationParams;
 import web.rest.tools.conversion.DataExpander;
 
 @Service
@@ -43,8 +43,13 @@ public class EventsUtil {
 		return toEventDataObjectList(this.eventDao.getEvents());
 	}
 
-	public List<EventData> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams, DataExpander expander, PagingData pagingData) {
-		return toEventDataObjectList(this.eventDao.getEvents(searchParams, sortParams, pagingData), expander);
+	public Long getEventsCount(SearchParams<Event> searchParams) {
+		return this.eventDao.getEventsCount(searchParams);
+	}
+
+	public List<EventData> getEvents(SearchParams<Event> searchParams, SortParams<Event> sortParams, DataExpander expander,
+			PaginationParams paginationParams) {
+		return toEventDataObjectList(this.eventDao.getEvents(searchParams, sortParams, paginationParams), expander);
 	}
 
 	public EventData getEvent(Long id) {
