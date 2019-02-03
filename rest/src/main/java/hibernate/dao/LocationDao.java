@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import hibernate.entities.Location;
 import hibernate.search.SearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.pagination.PaginationParams;
 
 @Repository
 public class LocationDao {
@@ -41,7 +42,7 @@ public class LocationDao {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Location> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams) {
+	public List<Location> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams, PaginationParams paginationParams) {
 		CriteriaBuilder builder = this.commonDao.getCriteriaBuilder();
 		CriteriaQuery<Location> crit = builder.createQuery(Location.class);
 		Root<Location> root = crit.from(Location.class);
@@ -49,7 +50,18 @@ public class LocationDao {
 		searchParams.applySearchFilters(builder, crit, root);
 		sortParams.applySortParams(crit, root);
 
-		return this.commonDao.findByCriteria(Location.class, crit);
+		return this.commonDao.findPaginatedByCriteria(Location.class, crit, paginationParams);
+	}
+
+	@Transactional(readOnly = true)
+	public Long getLocationsCount(SearchParams<Location> searchParams) {
+		CriteriaBuilder builder = this.commonDao.getCriteriaBuilder();
+		CriteriaQuery<Long> crit = builder.createQuery(Long.class);
+		Root<Location> root = crit.from(Location.class);
+
+		searchParams.applySearchFilters(builder, crit, root);
+
+		return this.commonDao.findCountByCriteria(Location.class, crit, root);
 	}
 
 }

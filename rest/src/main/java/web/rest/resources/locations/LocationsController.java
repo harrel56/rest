@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +31,8 @@ import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
+import web.rest.resources.pagination.PaginationParams;
+import web.rest.resources.pagination.PaginationWrapper;
 import web.rest.tools.conversion.DataExpander;
 import web.rest.tools.validation.ValidationUtil;
 
@@ -44,14 +47,18 @@ public class LocationsController {
 	LocationsUtil locationsUtil;
 
 	@GetMapping({ "", "/" })
-	public List<LocationData> getLocations(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@RequestParam(name = "name", required = false) String name, @RequestParam(name = "description", required = false) String description,
-			@RequestParam(name = "state", required = false) String state, @RequestParam(name = "latitude", required = false) Double latitude,
-			@RequestParam(name = "longitude", required = false) Double longitude, @RequestParam(name = "radius", required = false) Double radius,
-			@RequestParam(name = "sort", required = false) String[] sorts, @RequestParam(name = "expand", required = false) String[] expands) {
+	public PaginationWrapper<LocationData> getLocations(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@ModelAttribute PaginationParams paginationParams, @RequestParam(name = "name", required = false) String name,
+			@RequestParam(name = "description", required = false) String description, @RequestParam(name = "state", required = false) String state,
+			@RequestParam(name = "latitude", required = false) Double latitude, @RequestParam(name = "longitude", required = false) Double longitude,
+			@RequestParam(name = "radius", required = false) Double radius, @RequestParam(name = "sort", required = false) String[] sorts,
+			@RequestParam(name = "expand", required = false) String[] expands) {
 
-		return this.locationsUtil.getLocations(new LocationSearchParams(name, description, state, latitude, longitude, radius),
-				new SortParams<Location>(Location.class, sorts), new DataExpander(expands));
+		LocationSearchParams searchParams = new LocationSearchParams(name, description, state, latitude, longitude, radius);
+		Long totalCount = this.locationsUtil.getLocationsCount(searchParams);
+
+		return PaginationWrapper.wrap(this.locationsUtil.getLocations(new LocationSearchParams(name, description, state, latitude, longitude, radius),
+				new SortParams<Location>(Location.class, sorts), new DataExpander(expands), paginationParams), paginationParams, totalCount);
 	}
 
 	@GetMapping("/{id}")

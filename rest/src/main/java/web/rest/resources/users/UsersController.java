@@ -12,6 +12,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,8 @@ import hibernate.sort.SortParams;
 import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.locations.model.LocationData;
+import web.rest.resources.pagination.PaginationParams;
+import web.rest.resources.pagination.PaginationWrapper;
 import web.rest.resources.users.model.UserData;
 import web.rest.resources.users.model.UserDetailsData;
 
@@ -40,12 +43,16 @@ public class UsersController {
 	UsersUtil usersUtil;
 
 	@GetMapping({ "", "/" })
-	public List<UserData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
-			@RequestParam(name = "login", required = false) String login, @RequestParam(name = "name", required = false) String name,
-			@RequestParam(name = "surname", required = false) String surname, @RequestParam(name = "location", required = false) String location,
-			@RequestParam(name = "sort", required = false) String[] sorts) {
+	public PaginationWrapper<UserData> getUsers(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+			@ModelAttribute PaginationParams paginationParams, @RequestParam(name = "login", required = false) String login,
+			@RequestParam(name = "name", required = false) String name, @RequestParam(name = "surname", required = false) String surname,
+			@RequestParam(name = "location", required = false) String location, @RequestParam(name = "sort", required = false) String[] sorts) {
 
-		return this.usersUtil.getUsers(new UserSearchParams(login, name, surname, location), new SortParams<User>(User.class, sorts));
+		UserSearchParams searchParams = new UserSearchParams(login, name, surname, location);
+		Long totalCount = this.usersUtil.getUsersCount(searchParams);
+
+		return PaginationWrapper.wrap(this.usersUtil.getUsers(new UserSearchParams(login, name, surname, location),
+				new SortParams<User>(User.class, sorts), paginationParams), paginationParams, totalCount);
 	}
 
 	@GetMapping("/{login}")

@@ -27,6 +27,7 @@ import web.rest.resources.events.model.EventData;
 import web.rest.resources.events.model.EventDetailsData;
 import web.rest.resources.locations.model.LocationData;
 import web.rest.resources.locations.model.LocationDetailsData;
+import web.rest.resources.pagination.PaginationParams;
 import web.rest.tools.conversion.DataExpander;
 
 @Service
@@ -48,8 +49,13 @@ public class LocationsUtil {
 		return toLocationDataObjectList(this.locationDao.getLocations());
 	}
 
-	public List<LocationData> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams, DataExpander expander) {
-		return toLocationDataObjectList(this.locationDao.getLocations(searchParams, sortParams), expander);
+	public Long getLocationsCount(SearchParams<Location> searchParams) {
+		return this.locationDao.getLocationsCount(searchParams);
+	}
+
+	public List<LocationData> getLocations(SearchParams<Location> searchParams, SortParams<Location> sortParams, DataExpander expander,
+			PaginationParams paginationParams) {
+		return toLocationDataObjectList(this.locationDao.getLocations(searchParams, sortParams, paginationParams), expander);
 	}
 
 	public LocationData getLocation(Long id) {

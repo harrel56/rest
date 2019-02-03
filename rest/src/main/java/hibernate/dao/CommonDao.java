@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,6 +84,7 @@ public class CommonDao {
 	 */
 	@Transactional(readOnly = true)
 	public <T> List<T> findPaginatedByCriteria(Class<T> clazz, CriteriaQuery<T> crit, PaginationParams paginationParams) {
+		this.em.unwrap(Session.class).enableFilter("test").setParameter("someId", 3L);
 		return this.em.createQuery(crit).setFirstResult(paginationParams.getFirstPos()).setMaxResults(paginationParams.size).getResultList();
 	}
 

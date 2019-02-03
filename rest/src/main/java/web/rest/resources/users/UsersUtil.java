@@ -14,11 +14,13 @@ import org.springframework.stereotype.Service;
 
 import hibernate.dao.UserDao;
 import hibernate.entities.User;
+import hibernate.search.SearchParams;
 import hibernate.search.UserSearchParams;
 import hibernate.sort.SortParams;
 import web.rest.resources.attendances.model.AttendanceData;
 import web.rest.resources.events.model.EventData;
 import web.rest.resources.locations.model.LocationData;
+import web.rest.resources.pagination.PaginationParams;
 import web.rest.resources.users.model.UserData;
 import web.rest.resources.users.model.UserDetailsData;
 
@@ -32,8 +34,12 @@ public class UsersUtil {
 		return toUserDataObjectList(this.userDao.getUsers());
 	}
 
-	public List<UserData> getUsers(UserSearchParams searchParams, SortParams<User> sortParams) {
-		return toUserDataObjectList(this.userDao.getUsers(searchParams, sortParams));
+	public Long getUsersCount(SearchParams<User> searchParams) {
+		return this.userDao.getUsersCount(searchParams);
+	}
+
+	public List<UserData> getUsers(UserSearchParams searchParams, SortParams<User> sortParams, PaginationParams paginationParams) {
+		return toUserDataObjectList(this.userDao.getUsers(searchParams, sortParams, paginationParams));
 	}
 
 	public UserData getUserByLogin(String login) {

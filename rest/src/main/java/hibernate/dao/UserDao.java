@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import hibernate.entities.User;
 import hibernate.search.SearchParams;
 import hibernate.sort.SortParams;
+import web.rest.resources.pagination.PaginationParams;
 
 @Repository
 public class UserDao {
@@ -36,7 +37,7 @@ public class UserDao {
 	}
 
 	@Transactional(readOnly = true)
-	public List<User> getUsers(SearchParams<User> searchParams, SortParams<User> sortParams) {
+	public List<User> getUsers(SearchParams<User> searchParams, SortParams<User> sortParams, PaginationParams paginationParams) {
 		CriteriaBuilder builder = this.commonDao.getCriteriaBuilder();
 		CriteriaQuery<User> crit = builder.createQuery(User.class);
 		Root<User> root = crit.from(User.class);
@@ -44,7 +45,18 @@ public class UserDao {
 		searchParams.applySearchFilters(builder, crit, root);
 		sortParams.applySortParams(crit, root);
 
-		return this.commonDao.findByCriteria(User.class, crit);
+		return this.commonDao.findPaginatedByCriteria(User.class, crit, paginationParams);
+	}
+
+	@Transactional(readOnly = true)
+	public Long getUsersCount(SearchParams<User> searchParams) {
+		CriteriaBuilder builder = this.commonDao.getCriteriaBuilder();
+		CriteriaQuery<Long> crit = builder.createQuery(Long.class);
+		Root<User> root = crit.from(User.class);
+
+		searchParams.applySearchFilters(builder, crit, root);
+
+		return this.commonDao.findCountByCriteria(User.class, crit, root);
 	}
 
 	@Transactional(readOnly = true)

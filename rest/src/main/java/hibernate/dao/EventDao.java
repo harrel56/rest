@@ -50,7 +50,7 @@ public class EventDao {
 		searchParams.applySearchFilters(builder, crit, root);
 		sortParams.applySortParams(crit, root);
 
-		return this.commonDao.findByCriteria(Event.class, crit);
+		return this.commonDao.findPaginatedByCriteria(Event.class, crit, paginationParams);
 	}
 
 	@Transactional(readOnly = true)
