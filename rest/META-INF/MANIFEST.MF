@@ -3,4 +3,4 @@ Bundle-ManifestVersion: 2
 Bundle-Name: rest
 Bundle-SymbolicName: rest
 Bundle-Version: 1.0.0.qualifier
-Export-Package: web.rest
+Export-Package: server

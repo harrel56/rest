@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+
+    <!-- Daos -->
+    <!--    <bean id="commonDao" class="hibernate.dao.CommonDao"/>-->
+    <!--    <bean id="userDao" class="hibernate.dao.UserDao"/>-->
+    <!--    <bean id="LocationDao" class="hibernate.dao.LocationDao"/>-->
+    <!--    <bean id="EventDao" class="hibernate.dao.EventDao"/>-->
+    <!--    <bean id="AttendanceDao" class="hibernate.dao.AttendanceDao"/>-->
+
+    <!-- Utils -->
+    <!--	<bean id = "userManagementUtil" class = "server.rest.usermanagement.UserManagementUtil" />-->
+    <!--	<bean id = "usersUtil" class = "server.rest.resources.users.UsersUtil" />-->
+    <!--	<bean id = "locationsUtil" class = "server.rest.resources.locations.LocationsUtil" />-->
+
+
+    <!-- Spring + Hibernate transaction management -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.sqlite.JDBC"/>
+        <property name="url" value="${jdbc.connection-string}"/>
+    </bean>
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:packagesToScan="hibernate.entities"
+          p:dataSource-ref="dataSource"
+    >
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="showSql" value="true"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">-->
+    <!--		<property name="entityManagerFactory" ref="entityManagerFactory" />-->
+    <!--	</bean>-->
+
+    <!--	<tx:annotation-driven transaction-manager="transactionManager" />-->
+
+
+    <!-- Security -->
+    <bean id="bCryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+    <bean id="daoAuthenticationProvider"
+          class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="hideUserNotFoundExceptions" value="false"/>
+        <property name="userDetailsService">
+            <bean id="userDetailsServiceImpl" class="server.rest.config.security.UserDetailsServiceImpl"/>
+        </property>
+    </bean>
+
+
+    <!-- Bundles support - multi language support -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>i18n/userManagement</value>
+            </list>
+        </property>
+    </bean>
+
+</beans>
