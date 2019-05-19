@@ -23,7 +23,7 @@ import server.rest.resources.users.model.UserDetailsData;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("api/users")
 public class UsersController {
 
     @SuppressWarnings("unused")

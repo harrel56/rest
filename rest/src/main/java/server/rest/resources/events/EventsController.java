@@ -26,7 +26,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
-@RequestMapping("/events")
+@RequestMapping("/api/events")
 public class EventsController {
 
     @SuppressWarnings("unused")
