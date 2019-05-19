@@ -121,6 +121,7 @@
             </plugin>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
+<!--  Before build and run - run this maven goal: com.github.eirslett:frontend-maven-plugin:1.7.6:webpack -->
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.7.6</version>
                 <configuration>

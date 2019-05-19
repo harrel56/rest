@@ -17,7 +17,7 @@ class Root extends React.Component {
             </NavBar>
 
 
-            <div className='w-screen mt-4'>
+            <div className='container'>
                 {this.props.children}
             </div>
 

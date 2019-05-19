@@ -1,4 +1,8 @@
-import React from 'react';
+import React from 'react'
+import GenericTable from './GenericTable'
+import {flattenJsonArray} from './utils/json.js'
+
+const visibleFields = ['id', 'login', 'userDetails.name', 'userDetails.surname', 'userDetails.location', 'userDetails.dateOfBirth']
 
 class Users extends React.Component {
 
@@ -41,13 +45,9 @@ class Users extends React.Component {
           return <div>Loading...</div>;
         } else {
           return (
-            <ul>
-              {items.map(item => (
-                <li key={item.login}>
-                  {item.login}
-                </li>
-              ))}
-            </ul>
+            <div className='pt-5'>
+                <GenericTable fields={visibleFields} data={flattenJsonArray(items)}/>
+            </div>
           );
         }
     }

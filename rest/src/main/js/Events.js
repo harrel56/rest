@@ -1,4 +1,8 @@
 import React from 'react';
+import GenericTable from './GenericTable'
+import {flattenJsonArray} from './utils/json.js'
+
+const visibleFields = ['id', 'eventDetails.name', 'eventDetails.description', 'eventDetails.state', 'eventDetails.startTime', 'eventDetails.endTime']
 
 class Events extends React.Component {
     constructor(props) {
@@ -40,13 +44,9 @@ class Events extends React.Component {
           return <div>Loading...</div>;
         } else {
           return (
-            <ul>
-              {items.map(item => (
-                <li key={item.eventDetails.name}>
-                  {item.eventDetails.name}
-                </li>
-              ))}
-            </ul>
+            <div className='pt-5'>
+                <GenericTable fields={visibleFields} data={flattenJsonArray(items)}/>
+            </div>
           );
         }
     }
