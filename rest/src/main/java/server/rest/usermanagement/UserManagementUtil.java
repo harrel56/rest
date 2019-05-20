@@ -55,7 +55,8 @@ public class UserManagementUtil {
             }
 
             User user = new User(null, registrationData.getLogin(), registrationData.getEmail(), this.encoder.encode(registrationData.getPassword()));
-            user.setActivationString(this.generateActivationString());
+            //TODO: activation?
+            //user.setActivationString(this.generateActivationString());
             this.userDao.addUser(user);
 
             return UserRegistrationResponseData.ResponseState.CREATED;

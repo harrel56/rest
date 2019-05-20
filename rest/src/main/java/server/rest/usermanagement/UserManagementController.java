@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/user-management")
+@RequestMapping("api/user-management")
 public class UserManagementController {
 
     @SuppressWarnings("unused")
@@ -31,14 +31,15 @@ public class UserManagementController {
     private UserManagementResponseCreator responseCreator;
 
     @PostMapping("/register")
-    public ResponseEntity<UserRegistrationResponseData> register(@RequestHeader(value = "Accept-language", defaultValue = "en") Locale locale,
+    public ResponseEntity<UserRegistrationResponseData> register(Locale locale,
                                                                  @Valid @RequestBody UserRegistrationRequestData userData) {
 
         UserRegistrationResponseData.ResponseState state = this.userManagementUtil.registerNewUser(userData);
 
-        if (state == UserRegistrationResponseData.ResponseState.CREATED) {
-            this.userManagementUtil.sendActivationEmail(locale, userData.getLogin());
-        }
+        //TODO: activation emails?
+//        if (state == UserRegistrationResponseData.ResponseState.CREATED) {
+//            this.userManagementUtil.sendActivationEmail(locale, userData.getLogin());
+//        }
 
         return this.responseCreator.createRegistrationResponse(locale, state);
     }
