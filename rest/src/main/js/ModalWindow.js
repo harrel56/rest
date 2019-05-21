@@ -1,49 +1,54 @@
-import React from "react";
+import React, { Fragment } from "react";
+import TransitionablePortal from "semantic-ui-react/dist/es/addons/TransitionablePortal/TransitionablePortal";
+import Modal from "semantic-ui-react/dist/es/modules/Modal/Modal";
 
 class ModalWindow extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isLoading: false
-    };
+    this.onOpen = this.onOpen.bind(this);
+    this.onClose = this.onClose.bind(this);
 
-    this.setLoading = this.setLoading.bind(this);
+    this.state = {
+      open: false,
+      triggerButton: React.cloneElement(this.props.trigger, {
+        onClick: this.onOpen
+      })
+    };
   }
 
   render() {
-    const children = React.Children.map(this.props.children, child => {
-      return React.cloneElement(child, { setParentLoading: this.setLoading });
-    });
+    const { open } = this.state;
+    const transition = {
+      animation: "scale",
+      duration: 300
+    };
 
     return (
-      <div
-        id={this.props.id}
-        className="modal fade"
-        role="dialog"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-sm" role="document">
-          <div className="modal-content">
-            <div className="modal-body">{children}</div>
-            {this.state.isLoading && (
-              <div className="modal-content overlay">
-                <div className="spinner-border m-auto" role="status">
-                  <span className="sr-only">Loading...</span>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
+      <Fragment>
+        {this.state.triggerButton}
+        <TransitionablePortal {...{ open }} {...{ transition }}>
+          <Modal
+            open
+            onOpen={this.onOpen}
+            onClose={this.onClose}
+            size={this.props.size}
+            centered={this.props.centered}
+          >
+            <Modal.Content>{this.props.children}</Modal.Content>
+          </Modal>
+        </TransitionablePortal>
+      </Fragment>
     );
   }
 
-  setLoading(loading) {
-    let $modal = $("#" + this.props.id);
-    $modal.data("bs.modal")._config.keyboard = false;
-    $modal.data("bs.modal")._config.backdrop = "static";
-    $modal.off("keydown.dismiss.bs.modal");
-    this.setState({ isLoading: loading });
+  onOpen() {
+    setTimeout(() => document.body.classList.add("modal-fade-in"));
+    this.setState({ open: true });
+  }
+
+  onClose() {
+    document.body.classList.remove("modal-fade-in");
+    this.setState({ open: false });
   }
 }
 

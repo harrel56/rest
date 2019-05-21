@@ -1,30 +1,29 @@
 import React from "react";
+import Table from "semantic-ui-react/dist/es/collections/Table/Table";
 
 const idField = "id";
 
 class GenericTable extends React.Component {
   render() {
     return (
-      <table className="table">
-        <thead className="thead-dark">
-          <tr>
+      <Table celled>
+        <Table.Header>
+          <Table.Row>
             {this.props.fields.map(header => (
-              <th scope="col" key={header}>
-                {header}
-              </th>
+              <Table.HeaderCell key={header}>{header}</Table.HeaderCell>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {this.props.data.map(row => (
-            <tr key={row[idField]}>
+            <Table.Row key={row[idField]}>
               {this.props.fields.map(field => (
-                <td key={field}>{row[field]}</td>
+                <Table.Cell key={field}>{row[field]}</Table.Cell>
               ))}
-            </tr>
+            </Table.Row>
           ))}
-        </tbody>
-      </table>
+        </Table.Body>
+      </Table>
     );
   }
 }

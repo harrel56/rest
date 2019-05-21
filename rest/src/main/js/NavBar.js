@@ -1,38 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Button from "semantic-ui-react/dist/es/elements/Button/Button";
+import Menu from "semantic-ui-react/dist/es/collections/Menu/Menu";
+
+import ModalWindow from "./ModalWindow";
+import LoginWidget from "./login/LoginWidget";
 
 class NavBar extends React.Component {
   render() {
     return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container-fluid">
-          <div className="navbar-header">
-            <a className="navbar-brand" href="/">
-              {this.props.name}
-            </a>
-          </div>
-
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="/map">
-                Map
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/events">
-                Events
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/users">
-                Users
-              </Link>
-            </li>
-          </ul>
-
-          <div className="navbar-right">{this.props.children}</div>
-        </div>
-      </nav>
+      <Menu stackable>
+        <Menu.Item>
+          <img src="https://react.semantic-ui.com/logo.png" />
+        </Menu.Item>
+        <Menu.Item as={Link} to="/map">
+          Map
+        </Menu.Item>
+        <Menu.Item as={Link} to="/events">
+          Events
+        </Menu.Item>
+        <Menu.Item as={Link} to="/users">
+          Users
+        </Menu.Item>
+        <Menu.Item position="right">
+          <ModalWindow
+            size="mini"
+            centered={false}
+            trigger={<Button primary>Sign in</Button>}
+          >
+            <LoginWidget />
+          </ModalWindow>
+        </Menu.Item>
+      </Menu>
     );
   }
 }

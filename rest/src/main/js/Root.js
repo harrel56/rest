@@ -1,5 +1,6 @@
 import React from "react";
-import ModalWindow from "./ModalWindow";
+import Container from "semantic-ui-react/dist/es/elements/Container/Container";
+
 import NavBar from "./NavBar";
 import LoginWidget from "./login/LoginWidget";
 
@@ -15,25 +16,31 @@ class Root extends React.Component {
   render() {
     return (
       <div>
-        <NavBar name={appName}>
-          <button
-            type="button"
-            className="btn btn-primary"
-            data-toggle="modal"
-            data-target={"#" + loginModalId}
-            onClick={() => this.LoginWidget.current.resetState()}
-          >
-            Sign in
-          </button>
-        </NavBar>
-
-        <div className="container">{this.props.children}</div>
-
-        <ModalWindow id={loginModalId}>
-          <LoginWidget ref={this.LoginWidget} />
-        </ModalWindow>
+        <NavBar />
+        <Container>{this.props.children}</Container>
       </div>
     );
+    //(
+    //   <div>
+    //     <NavBar name={appName}>
+    //       <button
+    //         type="button"
+    //         className="btn btn-primary"
+    //         data-toggle="modal"
+    //         data-target={"#" + loginModalId}
+    //         onClick={() => this.LoginWidget.current.resetState()}
+    //       >
+    //         Sign in
+    //       </button>
+    //     </NavBar>
+
+    //     <div className="container">{this.props.children}</div>
+
+    //     <ModalWindow id={loginModalId}>
+    //       <LoginWidget ref={this.LoginWidget} />
+    //     </ModalWindow>
+    //   </div>
+    // );
   }
 }
 
