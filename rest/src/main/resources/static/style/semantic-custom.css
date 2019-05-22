@@ -2,16 +2,16 @@
   width: 280px;
 }
 
-.field .header {
+.form .header {
   padding: 1.5rem;
 }
 
 .ui.button.secondary {
-  background-color: #28a745;
+  background-color: #28a745 !important;
 }
 
 .ui.button.secondary:hover {
-  background-color: #218838;
+  background-color: #218838 !important;
 }
 
 .ui.dimmer {
@@ -21,4 +21,8 @@
 
 .modal-fade-in .ui.dimmer {
   background-color: rgba(0, 0, 0, 0.85);
+}
+
+.modal-fade-in .ui.dimmer.inverted {
+  background-color: rgba(255, 255, 255, 0.85);
 }

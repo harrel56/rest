@@ -33,8 +33,12 @@ class ModalWindow extends React.Component {
             onClose={this.onClose}
             size={this.props.size}
             centered={this.props.centered}
+            closeOnDimmerClick={false}
+            closeIcon={true}
           >
-            <Modal.Content>{this.props.children}</Modal.Content>
+            <Modal.Content className="rounded">
+              {this.props.children}
+            </Modal.Content>
           </Modal>
         </TransitionablePortal>
       </Fragment>

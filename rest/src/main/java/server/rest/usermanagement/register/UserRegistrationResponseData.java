@@ -6,26 +6,24 @@ import java.io.Serializable;
 public class UserRegistrationResponseData implements Serializable {
 
     public enum ResponseState {
-        CREATED(true), LOGIN_ALREADY_TAKEN(false), EMAIL_ALREADY_TAKEN(false), LOGIN_INVALID(false), EMAIL_INVALID(false), PASSWORD_INVALID(false),
-        UNKNOWN_ERROR(false);
+        CREATED(null), LOGIN_ALREADY_TAKEN("login"), EMAIL_ALREADY_TAKEN("email"), LOGIN_INVALID("login"), EMAIL_INVALID("email"), PASSWORD_INVALID("password"),
+        UNKNOWN_ERROR(null);
 
-        private boolean succeded;
+        String field;
 
-        private ResponseState(boolean succeded) {
-            this.succeded = succeded;
-        }
-
-        public boolean succeded() {
-            return this.succeded;
+        ResponseState(String field) {
+            this.field = field;
         }
     }
 
     private final ResponseState state;
     private final String message;
+    private final String field;
 
     public UserRegistrationResponseData(ResponseState state, String message) {
         this.state = state;
         this.message = message;
+        this.field = state.field;
     }
 
     public ResponseState getState() {
@@ -34,5 +32,9 @@ public class UserRegistrationResponseData implements Serializable {
 
     public String getMessage() {
         return this.message;
+    }
+
+    public String getField() {
+        return this.field;
     }
 }

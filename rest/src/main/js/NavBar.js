@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Button from "semantic-ui-react/dist/es/elements/Button/Button";
 import Menu from "semantic-ui-react/dist/es/collections/Menu/Menu";
+import Form from "semantic-ui-react/dist/es/collections/Form/Form";
 
 import ModalWindow from "./ModalWindow";
 import LoginWidget from "./login/LoginWidget";
@@ -21,6 +22,11 @@ class NavBar extends React.Component {
         </Menu.Item>
         <Menu.Item as={Link} to="/users">
           Users
+        </Menu.Item>
+        <Menu.Item>
+          <Form onSubmit={e => console.log(e.target)}>
+            <Form.Field control={Button} type="submit" />
+          </Form>
         </Menu.Item>
         <Menu.Item position="right">
           <ModalWindow

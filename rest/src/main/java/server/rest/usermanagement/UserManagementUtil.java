@@ -38,17 +38,17 @@ public class UserManagementUtil {
     public UserRegistrationResponseData.ResponseState registerNewUser(UserRegistrationRequestData registrationData) {
 
         try {
-            if (!this.isLoginUnique(registrationData.getLogin())) {
-                return UserRegistrationResponseData.ResponseState.LOGIN_ALREADY_TAKEN;
-            }
-            if (!this.isEmailUnique(registrationData.getEmail())) {
-                return UserRegistrationResponseData.ResponseState.EMAIL_ALREADY_TAKEN;
-            }
             if (!this.isLoginValid(registrationData.getLogin())) {
                 return UserRegistrationResponseData.ResponseState.LOGIN_INVALID;
             }
             if (!this.isEmailValid(registrationData.getEmail())) {
                 return UserRegistrationResponseData.ResponseState.EMAIL_INVALID;
+            }
+            if (!this.isLoginUnique(registrationData.getLogin())) {
+                return UserRegistrationResponseData.ResponseState.LOGIN_ALREADY_TAKEN;
+            }
+            if (!this.isEmailUnique(registrationData.getEmail())) {
+                return UserRegistrationResponseData.ResponseState.EMAIL_ALREADY_TAKEN;
             }
             if (!this.isPasswordValid(registrationData.getPassword())) {
                 return UserRegistrationResponseData.ResponseState.PASSWORD_INVALID;
