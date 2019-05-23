@@ -157,12 +157,12 @@ public class UserManagementUtil {
     }
 
     private boolean isEmailValid(String email) {
-        String regex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+        String regex = "^[a-zA-Z0-9._%+-]{1,30}@[a-zA-Z0-9.-]{1,30}\\.[a-zA-Z]{2,6}$";
         return email.matches(regex);
     }
 
     private boolean isPasswordValid(String password) {
-        String regex = "^(?=.*[a-zA-Z])(?=\\S+$).{8,}$";
+        String regex = "^(?=.*[a-zA-Z])(?=\\S+$).{8,128}$";
         return password.matches(regex);
     }
 

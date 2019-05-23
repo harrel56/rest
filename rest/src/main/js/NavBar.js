@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 import Button from "semantic-ui-react/dist/es/elements/Button/Button";
 import Menu from "semantic-ui-react/dist/es/collections/Menu/Menu";
-import Form from "semantic-ui-react/dist/es/collections/Form/Form";
 
 import ModalWindow from "./ModalWindow";
 import LoginWidget from "./login/LoginWidget";
@@ -23,23 +23,28 @@ class NavBar extends React.Component {
         <Menu.Item as={Link} to="/users">
           Users
         </Menu.Item>
-        <Menu.Item>
-          <Form onSubmit={e => console.log(e.target)}>
-            <Form.Field control={Button} type="submit" />
-          </Form>
-        </Menu.Item>
         <Menu.Item position="right">
-          <ModalWindow
-            size="mini"
-            centered={false}
-            trigger={<Button primary>Sign in</Button>}
-          >
-            <LoginWidget />
-          </ModalWindow>
+          {this.props.currentUserName ? (
+            "Hello, " + this.props.currentUserName
+          ) : (
+            <ModalWindow
+              size="mini"
+              centered={false}
+              trigger={<Button primary>Sign in</Button>}
+            >
+              <LoginWidget />
+            </ModalWindow>
+          )}
         </Menu.Item>
       </Menu>
     );
   }
 }
 
-export default NavBar;
+function mapStateToProps(state) {
+  return {
+    currentUserName: state.currentUser.login
+  };
+}
+
+export default connect(mapStateToProps)(NavBar);

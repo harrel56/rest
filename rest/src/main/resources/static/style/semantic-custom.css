@@ -2,6 +2,10 @@
   width: 280px;
 }
 
+.field.error-border input {
+  border-color: #e0b4b4 !important;
+}
+
 .form .header {
   padding: 1.5rem;
 }
